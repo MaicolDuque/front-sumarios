@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { LoginService } from '../services/user';
+import { LoginService, LooutService } from '../services/user';
 import Spinner from '../components/Spinner';
 
 const UsuarioContext = React.createContext();
@@ -34,9 +34,18 @@ function UsuarioProvider({ children }) {
   const register = () => { } // register the user
 
   const logout = () => {
-    window.sessionStorage.removeItem('token');
-    setToken(null);
-    setUser({ status: 'success', error: null, user: null, });
+    LooutService({
+      cbSuccess: (json) => {
+        window.sessionStorage.removeItem('token');
+        setToken(null);
+        setUser({ status: 'success', error: null, user: null, });
+      },
+      cbError: (error) => {
+        window.sessionStorage.removeItem('token');
+        setToken(null);
+        setUser({ info: null, status: 'error', error: { message: error.toString() } })
+      }
+    })
   }
 
   return (
@@ -48,18 +57,6 @@ function UsuarioProvider({ children }) {
       setUser,
       setToken
     }}  >
-      {/* {user.status === 'pending' ? (
-        <Spinner />
-      ) : user.status === 'error' ? (
-        <div>
-          Oh no
-          <div>
-            <pre>{user.error.message}</pre>
-          </div>
-        </div>
-      ) : (
-            children
-          )} */}
           { children }
     </UsuarioContext.Provider>
   )

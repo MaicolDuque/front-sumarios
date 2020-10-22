@@ -15,8 +15,8 @@ export default ({ showHideMenu }) => {
     showHideMenu(!showMenu)
   }  
 
-  const logoutUser = () => {    
-    logout();    
+  const logoutUser = () => {
+    logout();
   }
 
   return (

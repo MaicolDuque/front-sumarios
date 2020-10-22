@@ -15,6 +15,22 @@ const LoginService = async ({ cbSuccess, cbError }) => {
   })
 }
 
+const LooutService = async ({ cbSuccess, cbError }) => {
+  apiFetch({
+    URL: 'auth/google/logout',
+    options: {
+      method: 'GET',
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    },
+    cbSuccess: (data) => cbSuccess(data),
+    cbError: (error) => cbError(error)
+  })
+}
+
 export {
-  LoginService
+  LoginService,
+  LooutService
 }
