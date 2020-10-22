@@ -1,24 +1,30 @@
 import { MenuItem } from "@material-ui/core"
+import { LocalGasStationRounded } from "@material-ui/icons"
 import React from "react"
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
-import Menu from "./Pages/Home/index"
+import Login from "./Pages/Login/index.jsx"
+import Home from "./Pages/Home/index"
 import Register from "./Pages/Register/index"
+import AuthState from "./Auth/Context"
 
 const Routes = () => {
     return (
-        <Router>
-            <Switch>
-                <Menu>
-                    <Switch>
-                        <Route
-                            path="/register"
-                            component={Register}
-                            exact
-                        />
-                    </Switch>
-                </Menu>
-            </Switch>
-        </Router>
+        <AuthState>
+            <Router>
+                <Switch>
+                    <Login path="/" exact>
+                        <Switch>
+                            <Route
+                                path="/register"
+                                component={Register}
+                                exact
+                            />
+                        </Switch>
+                    </Login>
+                    <Home path="/home" exact />
+                </Switch>
+            </Router>
+        </AuthState>
     )
 }
 
