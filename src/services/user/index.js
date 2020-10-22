@@ -1,14 +1,14 @@
 import { apiFetch } from '../apiFetch';
 
-const LoginService = async ({ email, password, cbSuccess, cbError }) => {
+const LoginService = async ({ cbSuccess, cbError }) => {
   apiFetch({
-    URL: 'auth/local',
+    URL: 'auth/google/success',
     options: {
-      method: 'POST',
+      method: 'GET',
+      credentials: "include",
       headers: {
         "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ email, password })
+      }
     },
     cbSuccess: (data) => cbSuccess(data),
     cbError: (error) => cbError(error)

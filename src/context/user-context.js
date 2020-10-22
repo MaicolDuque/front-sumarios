@@ -13,35 +13,22 @@ function UsuarioProvider({ children }) {
   const [user, setUser] = useState({
     status: 'success',
     error: null,
-    user: token,
+    info: token,
   });
 
-  const login = async ({ email, password }) => {
+  const login = () => {
     setUser({ ...user, status: 'pending' })
     LoginService({
-      email,
-      password,
       cbSuccess: (json) => {
-        setUser({ status: 'success', error: null, user: json });
+        setUser({ status: 'success', error: null, info: json.user });
         setToken(json.token);
         window.sessionStorage.setItem('token', json.token);
       },
       cbError: (error) => {
-        window.sessionStorage.removeItem('jwt')
-        setUser({ user: null, status: 'error', error: { message: error.toString() } })
+        window.sessionStorage.removeItem('token')
+        setUser({ info: null, status: 'error', error: { message: error.toString() } })
       }
     })
-    // try {
-    //   const res = await LoginService(email, password);
-    //   const json = await res.json();
-    //   if (!res.ok) return setUser({ status: 'error', error: { message: json.message } })
-    //   setUser({ status: 'success', error: null, user: json });
-    //   setToken(json.token);
-    //   window.sessionStorage.setItem('token', json.token);
-    // } catch (error) {
-    //   window.sessionStorage.removeItem('jwt')
-    //   setUser({ user: null, status: 'error', error: { message: error.toString() } })
-    // }
   }
 
   const register = () => { } // register the user
@@ -58,9 +45,10 @@ function UsuarioProvider({ children }) {
       login,
       logout,
       user,
-      setUser
+      setUser,
+      setToken
     }}  >
-      {user.status === 'pending' ? (
+      {/* {user.status === 'pending' ? (
         <Spinner />
       ) : user.status === 'error' ? (
         <div>
@@ -71,7 +59,8 @@ function UsuarioProvider({ children }) {
         </div>
       ) : (
             children
-          )}
+          )} */}
+          { children }
     </UsuarioContext.Provider>
   )
 }

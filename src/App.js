@@ -69,8 +69,8 @@ function AuthenticateApp() {
 }
 
 function App() {
-  const { user: { user } } = useUsuario();
-  return user ? <AuthenticateApp /> : <UnauthenticateApp />
+  const { user: { info } } = useUsuario();
+  return info ? <AuthenticateApp /> : <UnauthenticateApp />
 }
 
 export default App;
