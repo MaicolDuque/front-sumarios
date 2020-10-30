@@ -24,6 +24,7 @@ const Context = ({ children }) => {
             strData: "",
         }));
         localStorage.removeItem("token");
+        sessionStorage.removeItem("token");
     };
     const autenticarToken = (data, boolean) => {
         if (boolean) {

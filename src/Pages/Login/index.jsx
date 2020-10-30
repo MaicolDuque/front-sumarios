@@ -1,16 +1,12 @@
 import React, { useState, useEffect, useCallback, useContext } from "react"
 import axios from "axios";
 import {
-    AppBar,
-    Toolbar,
-    Box,
     makeStyles,
     Button,
-    Container,
-    Link,
 } from '@material-ui/core';
 import { useHistory } from "react-router-dom";
 import { useGoogleLogin } from "react-google-login";
+
 
 //Context
 import { ContextCreate } from "../../Auth/Context";
@@ -38,7 +34,6 @@ const clientId = "647394978025-7tqu3po55pvko2aguma5iihggf05k8ms.apps.googleuserc
 const Login = ({ children }) => {
     const classes = barStyles();
     const history = useHistory();
-    const [openMenu, setOpenMenu] = useState(false);
     const [data, setData] = useState({
         email: ""
     })
@@ -50,18 +45,20 @@ const Login = ({ children }) => {
             await axios(
                 {
                     method: "POST",
-                    baseURL: "http://localhost:9043",
-                    url: "/api/users/verify",
+                    baseURL: `${process.env.REACT_APP_PROTOCOL_BACKEND}://${process.env.REACT_APP_HOST_BACKEND}${process.env.REACT_APP_PORT_BACKEND}`,
+                    url: `${process.env.REACT_APP_API}`,
                     data,
                 },
+
             )
                 .then((res) => {
                     console.log(res)
-                    // if (res.data.msg) {
-                    //     throw new Error(res.data.msg);
-                    // }
-                    // iniciarSesion(res.data.data);
-                    // sessionStorage.setItem("token", res.data.data);
+                    if (res.data.msg) {
+                        throw new Error(res.data.msg);
+                    }
+                    iniciarSesion(res.data.token);
+                    sessionStorage.setItem("token", res.data.token);
+                    history.push("/home")
                 })
                 .catch((error) => {
                     if (!axios.isCancel(error)) {
@@ -90,36 +87,24 @@ const Login = ({ children }) => {
         accessType: 'offline',
     })
 
+    useEffect(() => {
+        let signalSubmitData = axios.CancelToken.source();
+        return () => {
+            signalSubmitData.cancel("Petición abortada.");
+        };
+    },[1]);
     return (
-        <div className={classes.root}>
-            <AppBar position="static">
-                <Toolbar className={classes.toolbarHeader}>
-                    <Box paddingRight={1} className={classes.title}
-                        onClick={() => {
-                            history.push("");
-                        }}>
-                        <img
-                            src={require("../../Images/logo.png")}
-                            alt="Poli"
-                            width="300px"
-                        />
-
-                    </Box>
-                    <Button color="inherit"
-                        onClick={() => {
-                            signIn();
-                        }}
-                    >Iniciar sesión</Button>
-                    <Button color="inherit"
-                        onClick={() => {
-                            history.push("/register");
-                        }}>Registro</Button>
-                </Toolbar>
-            </AppBar>
-            <main className={!openMenu ? classes.main : classes.mainMenuActive}>
-                <Container>{children}</Container>
-            </main>
-        </div>
+        <>
+            <Button color="inherit"
+                onClick={() => {
+                    signIn();
+                }}
+            >Iniciar sesión</Button>
+            <Button color="inherit"
+                onClick={() => {
+                    history.push("/register");
+                }}>Registro</Button>
+        </>
     );
 }
 

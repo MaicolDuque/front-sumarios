@@ -1,10 +1,15 @@
 
 const All = {
-google: {
-    clientID: process.env.CLIENTE_GOOGLE,
-    clientSecret: process.env.CLIENTE_GOOGLE_SECRET,
-    callbackURL: process.env.CALLBACK_URL
+  google: {
+    clientID: `${process.env.CLIENTE_GOOGLE}`,
+    clientSecret: `${process.env.CLIENTE_GOOGLE_SECRET}`,
   },
+  backend: {
+    protocol: `${process.env.REACT_APP_PROTOCOL_BACKEND}`,
+    host: `${process.env.REACT_APP_HOST_BACKEND}`,
+    port: `${process.env.REACT_APP_PORT_BACKEND}`,
+    api: `${process.env.REACT_APP_API}`,
+  }
 }
 
 export default All;
