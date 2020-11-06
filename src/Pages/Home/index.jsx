@@ -6,22 +6,17 @@ import {
     makeStyles,
     Button,
     Container,
-    IconButton,
     Drawer,
-    useTheme,
     List,
     ListItem,
     ListItemIcon,
     ListItemText,
     Divider,
 } from '@material-ui/core';
-import MenuIcon from '@material-ui/icons/Menu';
 import { useHistory } from "react-router-dom";
 import { useGoogleLogout } from "react-google-login"
-import clsx from 'clsx';
-import { grey } from '@material-ui/core/colors';
 
-import AccountBoxIcon from '@material-ui/icons/AccountBox';
+import FaceIcon from '@material-ui/icons/Face';
 import PermContactCalendarIcon from '@material-ui/icons/PermContactCalendar';
 import DraftsIcon from '@material-ui/icons/Drafts';
 import SubjectIcon from '@material-ui/icons/Subject';
@@ -55,13 +50,11 @@ const barStyles = makeStyles((theme) => ({
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,
         }),
+        zIndex: theme.zIndex.drawer + 1,
     },
     nested: {
         paddingLeft: theme.spacing(4),
         paddingBottom: theme.spacing(2)
-    },
-    appBar: {
-        zIndex: theme.zIndex.drawer + 1,
     },
     drawer: {
         width: drawerWidth,
@@ -82,7 +75,7 @@ const clientId = "647394978025-7tqu3po55pvko2aguma5iihggf05k8ms.apps.googleuserc
 const Menu = ({ children }) => {
     const classes = barStyles();
     const history = useHistory();
-    const [openMenu, setOpenMenu] = useState(false);
+    const [openMenu] = useState(false);
     const { token } = useContext(ContextCreate);
     const { cerrarSesion } = useContext(ContextCreate);
 
@@ -99,9 +92,7 @@ const Menu = ({ children }) => {
         onLogoutSuccess,
         onFailure
     })
-    const [open, setOpen] = useState(true);
 
-    const theme = useTheme();
     const buttonHome = () => {
         return (
             <>
@@ -134,7 +125,7 @@ const Menu = ({ children }) => {
                 className={classes.drawer}
                 variant="permanent"
                 classes={{
-                  paper: classes.drawerPaper,
+                    paper: classes.drawerPaper,
                 }}
             >
                 <div className={classes.drawerContainer}>
@@ -153,12 +144,12 @@ const Menu = ({ children }) => {
                                 </ListItemIcon>
                                 <ListItemText secondary="Mis sumarios" />
                             </ListItem>
-                            <ListItem 
-                            button 
-                            className={classes.nested}
-                            onClick={() => {
-                                history.push("/search");
-                            }}>
+                            <ListItem
+                                button
+                                className={classes.nested}
+                                onClick={() => {
+                                    history.push("/search");
+                                }}>
                                 <ListItemIcon>
                                     <CreateIcon />
                                 </ListItemIcon>
@@ -176,13 +167,19 @@ const Menu = ({ children }) => {
                             <ListItemText primary="Contactos" />
                         </ListItem>
                         <List component="div" disablePadding className={classes.listTitle}>
-                            <ListItem button className={classes.nested}>
+                            <ListItem button className={classes.nested}
+                                onClick={() => {
+                                    history.push("/contact");
+                                }}>
                                 <ListItemIcon>
                                     <PermContactCalendarIcon />
                                 </ListItemIcon>
                                 <ListItemText secondary="Mis contactos" />
                             </ListItem>
-                            <ListItem button className={classes.nested}>
+                            <ListItem button className={classes.nested}
+                                onClick={() => {
+                                    history.push("/contactList");
+                                }}>
                                 <ListItemIcon>
                                     <ListAltIcon />
                                 </ListItemIcon>
@@ -196,9 +193,9 @@ const Menu = ({ children }) => {
                         <List component="div" disablePadding className={classes.listTitle}>
                             <ListItem button className={classes.nested}>
                                 <ListItemIcon>
-                                    <AccountBoxIcon />
+                                    <FaceIcon />
                                 </ListItemIcon>
-                                <ListItemText secondary="Información del usuario" />
+                                <ListItemText secondary="Información de perfil" />
                             </ListItem>
                         </List>
                     </List>

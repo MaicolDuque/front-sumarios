@@ -39,10 +39,7 @@ const AuthRoute = ({ component: Component, children, ...props }) => {
     );
 
     useEffect(() => {
-            getData();
-    }, [1]);
-
-    useEffect(() => {
+        getData();
         if (data) {
             autenticarToken(data, true);
         }

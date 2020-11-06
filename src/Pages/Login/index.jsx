@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useCallback, useContext } from "react"
+import React, { useState, useContext } from "react"
 import axios from "axios";
 import {
-    makeStyles,
     Button,
 } from '@material-ui/core';
 import { useHistory } from "react-router-dom";
@@ -12,37 +11,19 @@ import { useGoogleLogin } from "react-google-login";
 import { ContextCreate } from "../../Auth/Context";
 
 
-const barStyles = makeStyles((theme) => ({
-    root: {
-        flexGrow: 1,
-    },
-    toolbarHeader: {
-        minHeight: "45px",
-        background: "#196844"
-    },
-    menuButton: {
-        marginRight: theme.spacing(2),
-    },
-    title: {
-        flexGrow: 1,
-    },
-}));
-
 const clientId = "647394978025-7tqu3po55pvko2aguma5iihggf05k8ms.apps.googleusercontent.com";
 
 
-const Login = ({ children }) => {
-    const classes = barStyles();
+const Login = () => {
     const history = useHistory();
     const [data, setData] = useState({
         email: ""
     })
 
-    const { token, iniciarSesion } = useContext(ContextCreate);
+    const { iniciarSesion } = useContext(ContextCreate);
 
-    const submitData = useCallback(
-        async () => {
-            await axios(
+    const submitData = () => {
+            axios(
                 {
                     method: "POST",
                     baseURL: `${process.env.REACT_APP_PROTOCOL_BACKEND}://${process.env.REACT_APP_HOST_BACKEND}${process.env.REACT_APP_PORT_BACKEND}`,
@@ -65,9 +46,7 @@ const Login = ({ children }) => {
                         console.error(error);
                     }
                 });
-        },
-        [data, iniciarSesion]
-    )
+}
 
     const onSuccess = (res) => {
         console.log('Login Success: currentUser:', res.profileObj.email);
@@ -87,12 +66,6 @@ const Login = ({ children }) => {
         accessType: 'offline',
     })
 
-    useEffect(() => {
-        let signalSubmitData = axios.CancelToken.source();
-        return () => {
-            signalSubmitData.cancel("Petición abortada.");
-        };
-    },[1]);
     return (
         <>
             <Button color="inherit"
