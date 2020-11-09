@@ -1,12 +1,12 @@
 import React from "react"
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
-import Home from "./Pages/Home/index"
-import Register from "./Pages/Register"
+import Home from "./pages/Home/index"
+import Register from "./pages/Register"
 import AuthState from "./Auth/Context"
 import AuthRouter from "./Middleware/authRouter"
-import Search from "./Pages/ManageSummary/Search/index"
-import Contacts from "./Pages/ManageContacts/Contacts/index"
-import ContactsList from "./Pages/ManageContacts/ContactsList/index"
+import Search from "./pages/ManageSummary/Search/index"
+import Contacts from "./pages/ManageContacts/Contacts/index"
+import ContactsList from "./pages/ManageContacts/ContactsList"
 
 const Routes = () => {
     return (
