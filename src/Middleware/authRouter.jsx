@@ -43,7 +43,7 @@ const AuthRoute = ({ component: Component, children, ...props }) => {
         if (data) {
             autenticarToken(data, true);
         }
-    }, [data]);
+    }, []);
 
     if (!token) {
         return <Redirect to="/" />;

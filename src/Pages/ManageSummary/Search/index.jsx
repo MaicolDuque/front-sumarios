@@ -1,4 +1,4 @@
-import React, { useState,} from 'react'
+import React, { useState, } from 'react'
 import {
   Grid,
   InputAdornment,
@@ -52,13 +52,23 @@ const infoStyles = makeStyles((theme) => ({
 export default function Search() {
   const classes = infoStyles();
   const [groupKey, setGroupKey] = useState([]);
-  const [data, setData] = useState({
-    keyword: ""
-  })
+  const [data, setData] = useState({ keyword: "" })
+  const [articles, setArticles] = useState({ listArticles: [] })
+
   const handleSearchChange = (event) => {
     setData({
       ...data,
       [event.target.name]: event.target.value
+    })
+  }
+
+  const handleArticlesSelected = (event) => {
+    const value = event.target.value
+    const isChecked = event.target.checked
+    const newArticles = isChecked ? [...articles.listArticles, value] : articles.listArticles.filter(data => data !== value)
+    setArticles({
+      ...articles,
+      listArticles: newArticles
     })
   }
 
@@ -80,6 +90,10 @@ export default function Search() {
           console.error(error);
         }
       })
+  }
+
+  const validar = () => {
+    console.log(articles.listArticles)
   }
 
   return (
@@ -118,39 +132,33 @@ export default function Search() {
             Buscar
             </Button>
         </Grid>
+        <button onClick={validar}>Oeeeeee</button>
       </Grid>
+
       {groupKey.length === 0 ? null : (
         <Grid container>
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
-                <TableCell>
-                  <Checkbox></Checkbox>
-                </TableCell>
+                <TableRow>
+                  <TableCell>
+                    <Checkbox value="todos"></Checkbox>
+                  </TableCell>
+                  <TableCell></TableCell>
+                </TableRow>
               </TableHead>
               <TableBody>
                 {groupKey.map((item) => (
                   <TableRow key={item._id} >
-                    <TableRow>
-                      <TableCell>
-                        <Checkbox></Checkbox>
-                      </TableCell>
-                      <TableCell>
-                        <TableRow fullWidth>
-                          <Typography style={{ color: "#196844" }} gutterBottom>{item.title}</Typography>
-                        </TableRow>
-                        <TableRow>
-                          <Typography variante="subtitle1" className={classes.nested} gutterBottom>{item.authors}</Typography>
-                        </TableRow>
-                        <TableRow>
-                          <Link target="_blank" href={item.urlHtml} variante="subtitle1" className={classes.nested} gutterBottom>{item.urlHtml}</Link>
-                        </TableRow>
-                        <TableRow>
-                        <Typography variante="subtitle1" className={classes.nested} gutterBottom>Keywords: {data.keyword}: {item.list_keywords[data.keyword]}</Typography>
-                      </TableRow>
-                      </TableCell>
-                      
-                    </TableRow>
+                    <TableCell>
+                      <Checkbox value={item._id} name="listArticles" onChange={handleArticlesSelected}></Checkbox>
+                    </TableCell>
+                    <TableCell>
+                      <Typography style={{ color: "#196844" }} gutterBottom>{item.title}</Typography>
+                      <Typography variante="subtitle1" className={classes.nested} gutterBottom>{item.authors}</Typography>
+                      <Link target="_blank" href={item.urlHtml} variante="subtitle1" className={classes.nested} gutterBottom>{item.urlHtml}</Link>
+                      <Typography variante="subtitle1" className={classes.nested} gutterBottom>Keywords: {data.keyword}: {item.list_keywords[data.keyword]}</Typography>
+                    </TableCell>
                   </TableRow>))
                 }
               </TableBody>
