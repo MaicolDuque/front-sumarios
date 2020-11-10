@@ -56,6 +56,21 @@ export default function Register() {
       .catch((error) => {
         console.log("error")
       });
+
+    axios(
+      {
+        method: "POST",
+        baseURL: `${process.env.REACT_APP_PROTOCOL_BACKEND}://${process.env.REACT_APP_HOST_BACKEND}${process.env.REACT_APP_PORT_BACKEND}`,
+        url: `${process.env.REACT_APP_API_SEND_EMAIL}`,
+        data,
+      }
+    )
+      .then((res) => {
+        console.log(res)
+      })
+      .catch((error) => {
+        console.log("error")
+      });
   }
 
   return (
