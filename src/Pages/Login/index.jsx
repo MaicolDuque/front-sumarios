@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react"
+import React, { useState, useContext, useEffect } from "react"
 import axios from "axios";
 import {
     Button,
@@ -50,11 +50,15 @@ const Login = () => {
 
     const onSuccess = (res) => {
         console.log('Login Success: currentUser:', res.profileObj.email);
-        setData(() => ({
+        setData({
             email: res.profileObj.email,
-        }));
-        submitData();
+        });
     }
+
+    useEffect(() => {
+        submitData();
+    }, [data.email])
+
     const onFailure = (res) => {
         console.log('Login failed: res:', res);
     }

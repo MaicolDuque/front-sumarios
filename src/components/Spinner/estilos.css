@@ -1,4 +1,4 @@
-.loader,
+/* .loader,
 .loader:before,
 .loader:after {
   border-radius: 50%;
@@ -59,12 +59,23 @@
     box-shadow: 0 2.5em 0 0;
   }
 }
+ */
+
+.loader {
+  color: #28992e;
+  font-size: 10px;
+  margin: 80px auto;
+  position: relative;
+  top: 30%;
+  left: 48%;
+  z-index: 100;
+}
 
 .bg-loading {
   top: 0;
   left: 0;
   width: 100%;
-  background-color: hsl(0deg 0% 98% / 92%);
+  background-color: hsl(0deg 0% 98% / 60%);
   position: absolute;
   z-index: 2;
   height: 100%;
