@@ -24,3 +24,14 @@ export const createSummary = async (data, token) => {
     }
   })
 }
+
+export const getAllSummaries = async (idUSer, token) => {
+  return axios({
+    method: "GET",
+    baseURL: All.backend.url,
+    url: `/summaries/${idUSer}`,
+    headers: {
+      token
+    }
+  })
+}
