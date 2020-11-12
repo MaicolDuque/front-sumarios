@@ -29,7 +29,18 @@ export const getAllSummaries = async (idUSer, token) => {
   return axios({
     method: "GET",
     baseURL: All.backend.url,
-    url: `/summaries/${idUSer}`,
+    url: `/summaries/user/${idUSer}`,
+    headers: {
+      token
+    }
+  })
+}
+
+export const getAllArticlesBySummary = async (idSummary, token) => {
+  return axios({
+    method: "GET",
+    baseURL: All.backend.url,
+    url: `/summaries/${idSummary}`,
     headers: {
       token
     }

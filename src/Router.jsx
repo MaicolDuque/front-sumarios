@@ -8,6 +8,7 @@ import Search from "./pages/ManageSummary/Search/index"
 import Contacts from "./pages/ManageContacts/Contacts/index"
 import ContactsList from "./pages/ManageContacts/ContactsList"
 import Summaries from "./pages/Summaries"
+import Articles from "./pages/Summaries/Articles"
 
 const Routes = () => {
     return (
@@ -38,6 +39,7 @@ const Routes = () => {
                                     component={ContactsList}
                                 />
                                 <Route path="/summaries" exact component={Summaries} />
+                                <Route path="/summaries/articles" exact component={Articles} />
                             </AuthRouter>
                         </Switch>
                     </Home>

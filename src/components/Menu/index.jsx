@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Menu({window, mobileOpen, toggle}) {
+export default function Menu({ window, mobileOpen, toggle }) {
   const { token } = useContext(ContextCreate);
   const theme = useTheme();
   const classes = useStyles();
@@ -43,8 +43,8 @@ export default function Menu({window, mobileOpen, toggle}) {
           <ListItemText primary="Sumarios" />
         </ListItem>
         <List component="div" disablePadding className={classes.listTitle}>
-          <Link to="summaries" style={{ textDecoration: "none" }}>
-            <ListItem button className={classes.nested}>
+          <Link to="/summaries" style={{ textDecoration: "none" }}>
+            <ListItem button className={classes.nested}  >
               <ListItemIcon>
                 <SubjectIcon />
               </ListItemIcon>

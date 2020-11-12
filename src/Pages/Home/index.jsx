@@ -54,7 +54,7 @@ function Home({ children }) {
       <Menu mobileOpen={mobileOpen} toggle={handleDrawerToggle} />
       <main className={classes.content}>
         <div className={classes.toolbar} />
-        <Grid xs={12}  className={classes.paper}>
+        <Grid  className={classes.paper}>
           {children}
         </Grid>
       </main>
