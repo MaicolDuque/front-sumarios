@@ -46,3 +46,15 @@ export const getAllArticlesBySummary = async (idSummary, token) => {
     }
   })
 }
+
+export const updatesArticlesBySummary = async (idSummary, data, token) => {
+  return axios({
+    method: "PUT",
+    baseURL: All.backend.url,
+    url: `/summaries/${idSummary}`,
+    data,
+    headers: {
+      token
+    }
+  })
+}

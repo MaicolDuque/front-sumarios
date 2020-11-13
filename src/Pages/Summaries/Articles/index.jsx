@@ -11,7 +11,7 @@ import UpdateIcon from '@material-ui/icons/Update';
 
 import { ContextCreate } from '../../../Auth/Context';
 import Spinner from '../../../components/Spinner';
-import { getAllArticlesBySummary } from '../../../services/summaryService';
+import { getAllArticlesBySummary, updatesArticlesBySummary } from '../../../services/summaryService';
 import { Button, Checkbox, Typography } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 
@@ -26,7 +26,9 @@ export default function Articles() {
   const [cargando, setCargando] = useState(false);
   const { token } = useContext(ContextCreate);
   const [articles, setArticles] = useState([])
+  const [ resfresh, setRefresh ] = useState(false)
   const [idsArticles, setIdsArticles] = useState([])
+  const idSummary = localStorage.getItem('id_summary')
 
   const handleArticlesSelected = (event) => {
     const value = event.target.value
@@ -35,11 +37,16 @@ export default function Articles() {
     setIdsArticles(newArticlesId)
     console.log(idsArticles)
   }
+// 5fa37e4eca175442208c5b94
+  const updateArticles = () => {
+    setCargando(true)
+    updatesArticlesBySummary(idSummary, { list_articles: idsArticles }, token)
+      .then(data => { setCargando(false); setRefresh(!resfresh) })
+      .catch(error => console.log(error))
+  }
 
   useEffect(() => {
     setCargando(true)
-    const idSummary = localStorage.getItem('id_summary')
-    console.log(idSummary)
     getAllArticlesBySummary(idSummary, token)
       .then(info => {
         if (info.data) {
@@ -50,7 +57,7 @@ export default function Articles() {
         setCargando(false)
       })
       .catch(error => console.log(error))
-  }, [])
+  }, [resfresh])
 
   return (
     <>
@@ -61,10 +68,11 @@ export default function Articles() {
             <TableRow>
               <TableCell></TableCell>
               <TableCell>
-              <Button
+                <Button
                   variant="contained"
                   color="primary"
                   size="medium"
+                  onClick={updateArticles}
                   className={classes.button}
                   startIcon={<UpdateIcon />}>
                   Actualizar
