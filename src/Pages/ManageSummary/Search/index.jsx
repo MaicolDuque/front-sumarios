@@ -12,7 +12,6 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
   Checkbox,
   Paper,
@@ -47,7 +46,7 @@ const infoStyles = makeStyles((theme) => ({
     background: "#196844"
   },
   nested: {
-    paddingLeft: theme.spacing(4)
+    paddingLeft: theme.spacing(2)
   },
 }));
 
@@ -174,10 +173,17 @@ export default function Search() {
             <Table>
               <TableHead>
                 <TableRow>
+                  <TableCell></TableCell>
                   <TableCell>
-                    <AddCircleIcon onClick={crearSumario} fontSize="large" style={{ cursor: "pointer" }} titleAccess="Crear sumario" />
-                  </TableCell>
-                  <TableCell>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      size="medium"
+                      className={classes.button}
+                      onClick={crearSumario}
+                      startIcon={<AddCircleIcon />}>
+                      Crear sumario
+                 </Button>
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -188,10 +194,10 @@ export default function Search() {
                       <Checkbox color="primary" value={item._id} name="listArticles" onChange={handleArticlesSelected}></Checkbox>
                     </TableCell>
                     <TableCell>
-                      <Typography style={{ color: "#196844" }} gutterBottom>{item.title}</Typography>
-                      <Typography variante="subtitle1" className={classes.nested} gutterBottom>{item.authors}</Typography>
-                      <Link target="_blank" href={item.urlHtml} variante="subtitle1" className={classes.nested} gutterBottom>{item.urlHtml}</Link>
-                      <Typography variante="subtitle1" className={classes.nested} gutterBottom>Keywords: {data.keyword}: {item.list_keywords[data.keyword.toUpperCase()]}</Typography>
+                      <Typography style={{ color: "#196844" }} >{item.title}</Typography>
+                      <Typography variante="subtitle1" className={classes.nested} >{item.authors}</Typography>
+                      <Link target="_blank" href={item.urlHtml} variante="subtitle1" className={classes.nested} >{item.urlHtml}</Link>
+                      <Typography variante="subtitle1" className={classes.nested} >Keywords: {data.keyword}: {item.list_keywords[data.keyword.toUpperCase()]}</Typography>
                     </TableCell>
                   </TableRow>))
                 }
