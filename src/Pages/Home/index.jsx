@@ -1,213 +1,66 @@
-import React, { useState, useContext } from "react"
-import {
-    AppBar,
-    Toolbar,
-    Box,
-    makeStyles,
-    Button,
-    Container,
-    Drawer,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemText,
-    Divider,
-} from '@material-ui/core';
-import { useHistory } from "react-router-dom";
-import { useGoogleLogout } from "react-google-login"
+import React from 'react';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import { makeStyles } from '@material-ui/core/styles';
+import { Grid } from '@material-ui/core';
 
-import FaceIcon from '@material-ui/icons/Face';
-import PermContactCalendarIcon from '@material-ui/icons/PermContactCalendar';
-import DraftsIcon from '@material-ui/icons/Drafts';
-import SubjectIcon from '@material-ui/icons/Subject';
-import CreateIcon from '@material-ui/icons/Create';
-import ListAltIcon from '@material-ui/icons/ListAlt';
-
-import Login from '../Login/index'
-
-//Context
-import { ContextCreate } from "../../Auth/Context";
+import Header from '../../components/Header';
+import Menu from '../../components/Menu';
 
 const drawerWidth = 240;
-const barStyles = makeStyles((theme) => ({
-    rootList: {
-        width: '100%',
-        maxWidth: 360,
-        marginTop: "90px"
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
+  },
+  appBar: {
+    [theme.breakpoints.up('sm')]: {
+      width: `calc(100% - ${drawerWidth}px)`,
+      marginLeft: drawerWidth,
     },
-    root: {
-        flexGrow: 1,
+  },
+  // necessary for content to be below app bar
+  toolbar: theme.mixins.toolbar,
+  drawerPaper: {
+    width: drawerWidth,
+  },
+  content: {
+    flexGrow: 1,
+    padding: theme.spacing(3),
+    maxWidth: '100%'
+  },
+  paper: {
+    marginLeft: '100px',
+    marginRight: '100px',
+    marginTop: "40px",
+    [theme.breakpoints.down('sm')]: {
+      marginLeft: '10px',
+      marginRight: '10px',
     },
-    toolbarHeader: {
-        minHeight: "45px",
-        background: "#196844"
-    },
-    title: {
-        flexGrow: 1,
-    },
-    appBar: {
-        transition: theme.transitions.create(['margin', 'width'], {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
-        }),
-        zIndex: theme.zIndex.drawer + 1,
-    },
-    nested: {
-        paddingLeft: theme.spacing(4),
-        paddingBottom: theme.spacing(2)
-    },
-    drawer: {
-        width: drawerWidth,
-        flexShrink: 0,
-    },
-    drawerPaper: {
-        width: drawerWidth,
-    },
-    drawerContainer: {
-        overflow: 'auto',
-    },
+  },
 }));
 
-const clientId = "647394978025-7tqu3po55pvko2aguma5iihggf05k8ms.apps.googleusercontent.com";
+function Home({ children }) {
+  const classes = useStyles();
+  const [mobileOpen, setMobileOpen] = React.useState(false);
 
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
 
-
-const Menu = ({ children }) => {
-    const classes = barStyles();
-    const history = useHistory();
-    const [openMenu] = useState(false);
-    const { token } = useContext(ContextCreate);
-    const { cerrarSesion } = useContext(ContextCreate);
-
-    const onLogoutSuccess = (res) => {
-        cerrarSesion()
-    }
-
-    const onFailure = () => {
-        console.log('Handle failure cases');
-    }
-
-    const { signOut } = useGoogleLogout({
-        clientId,
-        onLogoutSuccess,
-        onFailure
-    })
-
-    const buttonHome = () => {
-        return (
-            <>
-                <Button color="inherit"
-                    onClick={() => {
-                        signOut();
-                    }}>Cerrar sesión</Button>
-            </>
-        )
-    }
-
-    return (
-        <div className={classes.root}>
-            <AppBar position="fixed" className={classes.appBar}>
-                <Toolbar className={classes.toolbarHeader}>
-                    <Box paddingRight={1} className={classes.title}
-                        onClick={() => {
-                            history.push("/home");
-                        }}>
-                        <img
-                            src={require("../../Images/logo.png")}
-                            alt="Poli"
-                            width="300px"
-                        />
-                    </Box>
-                    {token ? (buttonHome()) : <Login />}
-                </Toolbar>
-            </AppBar>
-            {token ? (<Drawer
-                className={classes.drawer}
-                variant="permanent"
-                classes={{
-                    paper: classes.drawerPaper,
-                }}
-            >
-                <div className={classes.drawerContainer}>
-                    <List
-                        component="nav"
-                        aria-labelledby="nested-list-subheader"
-                        className={classes.rootList}
-                    >
-                        <ListItem button className={classes.listTitle}>
-                            <ListItemText primary="Sumarios" />
-                        </ListItem>
-                        <List component="div" disablePadding className={classes.listTitle}>
-                            <ListItem button className={classes.nested}>
-                                <ListItemIcon>
-                                    <SubjectIcon />
-                                </ListItemIcon>
-                                <ListItemText secondary="Mis sumarios" />
-                            </ListItem>
-                            <ListItem
-                                button
-                                className={classes.nested}
-                                onClick={() => {
-                                    history.push("/search");
-                                }}>
-                                <ListItemIcon>
-                                    <CreateIcon />
-                                </ListItemIcon>
-                                <ListItemText secondary="Crear sumarios" />
-                            </ListItem>
-                            <ListItem button className={classes.nested}>
-                                <ListItemIcon>
-                                    <DraftsIcon />
-                                </ListItemIcon>
-                                <ListItemText secondary="Historial de envíos" />
-                            </ListItem>
-                        </List>
-                        <Divider />
-                        <ListItem button className={classes.listTitle}>
-                            <ListItemText primary="Contactos" />
-                        </ListItem>
-                        <List component="div" disablePadding className={classes.listTitle}>
-                            <ListItem button className={classes.nested}
-                                onClick={() => {
-                                    history.push("/contact");
-                                }}>
-                                <ListItemIcon>
-                                    <PermContactCalendarIcon />
-                                </ListItemIcon>
-                                <ListItemText secondary="Mis contactos" />
-                            </ListItem>
-                            <ListItem button className={classes.nested}
-                                onClick={() => {
-                                    history.push("/contactList");
-                                }}>
-                                <ListItemIcon>
-                                    <ListAltIcon />
-                                </ListItemIcon>
-                                <ListItemText secondary="Listas de contactos" />
-                            </ListItem>
-                        </List>
-                        <Divider />
-                        <ListItem button className={classes.listTitle}>
-                            <ListItemText primary="Perfil" />
-                        </ListItem>
-                        <List component="div" disablePadding className={classes.listTitle}>
-                            <ListItem button className={classes.nested}>
-                                <ListItemIcon>
-                                    <FaceIcon />
-                                </ListItemIcon>
-                                <ListItemText secondary="Información de perfil" />
-                            </ListItem>
-                        </List>
-                    </List>
-                </div>
-
-            </Drawer>) : null}
-
-            <main className={!openMenu ? classes.main : classes.mainMenuActive}>
-                <Container>{children}</Container>
-            </main>
-        </div>
-    );
+  return (
+    <div className={classes.root}>
+      <CssBaseline />
+      <Header toggle={handleDrawerToggle} />
+      <Menu mobileOpen={mobileOpen} toggle={handleDrawerToggle} />
+      <main className={classes.content}>
+        <div className={classes.toolbar} />
+        <Grid  className={classes.paper}>
+          {children}
+        </Grid>
+      </main>
+    </div>
+  );
 }
 
-export default Menu;
+
+export default Home;
