@@ -138,7 +138,10 @@ const Menu = ({ children }) => {
                             <ListItemText primary="Sumarios" />
                         </ListItem>
                         <List component="div" disablePadding className={classes.listTitle}>
-                            <ListItem button className={classes.nested}>
+                            <ListItem 
+                            button 
+                            className={classes.nested}
+                            >
                                 <ListItemIcon>
                                     <SubjectIcon />
                                 </ListItemIcon>

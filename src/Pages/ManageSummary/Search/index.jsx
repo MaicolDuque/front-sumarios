@@ -65,7 +65,7 @@ export default function Search() {
   const [data, setData] = useState({ keyword: "" })
   const [modal, setModal] = useState(false);
   const [cargando, setCargando] = useState(false);
-  const { infoUser, token } = useContext(ContextCreate);
+  const {infoUser, token } = useContext(ContextCreate);
   const [infoSumario, setInfoSumario] = useState({ name: '', description: '', list_articles: [], list_keywords: [], favorite: false, user_id: infoUser._id })
 
   const handleSearchChange = (event) => {
