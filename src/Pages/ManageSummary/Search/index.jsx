@@ -12,7 +12,6 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
   Checkbox,
   Paper,
@@ -32,11 +31,6 @@ import Spinner from '../../../components/Spinner';
 
 
 const infoStyles = makeStyles((theme) => ({
-  paper: {
-    padding: '20px',
-    marginLeft: "250px",
-    marginTop: "100px",
-  },
   title: {
     marginBottom: "30px"
   },
@@ -52,7 +46,7 @@ const infoStyles = makeStyles((theme) => ({
     background: "#196844"
   },
   nested: {
-    paddingLeft: theme.spacing(4)
+    paddingLeft: theme.spacing(2)
   },
 }));
 
@@ -65,8 +59,8 @@ export default function Search() {
   const [data, setData] = useState({ keyword: "" })
   const [modal, setModal] = useState(false);
   const [cargando, setCargando] = useState(false);
-  const {infoUser, token } = useContext(ContextCreate);
-  const [infoSumario, setInfoSumario] = useState({ name: '', description: '', list_articles: [], list_keywords: [], favorite: false, user_id: infoUser._id })
+  const { infoUser, token } = useContext(ContextCreate);
+  const [infoSumario, setInfoSumario] = useState({ name: '', description: '', list_articles: [], list_keywords: [], favorite: false, user_id: '' })
 
   const handleSearchChange = (event) => {
     setData({ ...data, [event.target.name]: event.target.value })
@@ -96,7 +90,7 @@ export default function Search() {
   }
 
   const crearSumario = () => {
-    setInfoSumario({ ...infoSumario, list_keywords: listKeywords })
+    setInfoSumario({ ...infoSumario, list_keywords: listKeywords, user_id: infoUser._id })
     setModal(true)
   }
 
@@ -142,70 +136,75 @@ export default function Search() {
           type="text" id="description"
           label="Descripción" variant="outlined" fullWidth />
       </Modal>
-      <Grid className={classes.paper} >
-        <Grid>
-          <Grid container
-            direction="row-reverse"
+      <Grid>
+        <Grid container
+          direction="row-reverse"
+        >
+          <FormControl variant="outlined" fullWidth>
+            <OutlinedInput
+              id="txt_keyword"
+              name="keyword"
+              value={data.keyword}
+              onChange={handleSearchChange}
+              endAdornment={
+                <InputAdornment position="end">
+                  <SearchIcon edge="end" />
+                </InputAdornment>
+              }>
+            </OutlinedInput>
+            <InputLabel>Buscar</InputLabel>
+          </FormControl>
+          <Button
+            id="btn_search"
+            name="search"
+            variant="contained"
+            color="primary"
+            onClick={getArticlesList}
+            className={classes.title}
           >
-            <FormControl variant="outlined" fullWidth>
-              <OutlinedInput
-                id="txt_keyword"
-                name="keyword"
-                value={data.keyword}
-                onChange={handleSearchChange}
-                endAdornment={
-                  <InputAdornment position="end">
-                    <SearchIcon edge="end" />
-                  </InputAdornment>
-                }>
-              </OutlinedInput>
-              <InputLabel>Buscar</InputLabel>
-            </FormControl>
-            <Button
-              id="btn_search"
-              name="search"
-              variant="contained"
-              color="primary"
-              onClick={getArticlesList}
-              className={classes.title}
-            >
-              Buscar
+            Buscar
             </Button>
-          </Grid>
         </Grid>
-
-        {groupKey.length === 0 ? null : (
-          <Grid container>
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>
-                      <AddCircleIcon onClick={crearSumario} fontSize="large" style={{ cursor: "pointer" }} titleAccess="Crear sumario" />
-                    </TableCell>
-                    <TableCell>
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {groupKey.map((item) => (
-                    <TableRow key={item._id} >
-                      <TableCell>
-                        <Checkbox color="primary" value={item._id} name="listArticles" onChange={handleArticlesSelected}></Checkbox>
-                      </TableCell>
-                      <TableCell>
-                        <Typography style={{ color: "#196844" }} gutterBottom>{item.title}</Typography>
-                        <Typography variante="subtitle1" className={classes.nested} gutterBottom>{item.authors}</Typography>
-                        <Link target="_blank" href={item.urlHtml} variante="subtitle1" className={classes.nested} gutterBottom>{item.urlHtml}</Link>
-                        <Typography variante="subtitle1" className={classes.nested} gutterBottom>Keywords: {data.keyword}: {item.list_keywords[data.keyword.toUpperCase()]}</Typography>
-                      </TableCell>
-                    </TableRow>))
-                  }
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Grid>)}
       </Grid>
+
+      {groupKey.length === 0 ? null : (
+        <Grid container>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell></TableCell>
+                  <TableCell>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      size="medium"
+                      className={classes.button}
+                      onClick={crearSumario}
+                      startIcon={<AddCircleIcon />}>
+                      Crear sumario
+                 </Button>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {groupKey.map((item) => (
+                  <TableRow key={item._id} >
+                    <TableCell>
+                      <Checkbox color="primary" value={item._id} name="listArticles" onChange={handleArticlesSelected}></Checkbox>
+                    </TableCell>
+                    <TableCell>
+                      <Typography style={{ color: "#196844" }} >{item.title}</Typography>
+                      <Typography variante="subtitle1" className={classes.nested} >{item.authors}</Typography>
+                      <Link target="_blank" href={item.urlHtml} variante="subtitle1" className={classes.nested} >{item.urlHtml}</Link>
+                      <Typography variante="subtitle1" className={classes.nested} >Keywords: {data.keyword}: {item.list_keywords[data.keyword.toUpperCase()]}</Typography>
+                    </TableCell>
+                  </TableRow>))
+                }
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Grid>)}
     </>
   )
 }
