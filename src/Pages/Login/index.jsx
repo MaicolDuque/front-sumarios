@@ -33,7 +33,6 @@ const Login = () => {
 
             )
                 .then((res) => {
-                    console.log(res)
                     if (res.data.msg) {
                         throw new Error(res.data.msg);
                     }
