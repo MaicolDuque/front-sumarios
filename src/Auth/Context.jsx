@@ -11,11 +11,14 @@ const Context = ({ children }) => {
         strData: "",
         user: localStorage.getItem("token") ? jwt_decode(localStorage.getItem("token").split(' ')[1]) : null
     });
+
+    // debugger;
     const iniciarSesion = (token) => {
         localStorage.setItem("token", token);
         setData((prevState) => ({
             ...prevState,
             token,
+            user: jwt_decode(localStorage.getItem("token").split(' ')[1])
         }));
     };
 

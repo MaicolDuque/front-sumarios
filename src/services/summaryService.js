@@ -58,3 +58,15 @@ export const updatesArticlesBySummary = async (idSummary, data, token) => {
     }
   })
 }
+
+export const sendEmailSummary = async (data, token) => {
+  return axios({
+    method: "POST",
+    baseURL: All.backend.url,
+    url: '/email/send-email',
+    data,
+    headers: {
+      token
+    }
+  })
+}
