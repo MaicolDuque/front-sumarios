@@ -18,6 +18,7 @@ import { getListsByEditor } from '../../services/contactsService';
 import { ContextCreate } from '../../Auth/Context';
 import Spinner from '../../components/Spinner';
 import Modal from '../../components/Modal';
+import useContactLists from '../../hooks/useContactLists';
 
 const useStyles = makeStyles((theme) => ({
   table: {
@@ -34,9 +35,9 @@ export default function Summaries() {
   const [cargando, setCargando] = useState(false);
   const [modal, setModal] = useState(false);
   const [infoEnvio, setInfoEnvio] = useState({ listaId: '', summaryId: '', name: '', description: '', error: false });
-  const [contactLists, setContactLists] = useState([])
   const { infoUser, token } = useContext(ContextCreate);
   const [summaries, setSummaries] = useState([])
+  const { contactLists } = useContactLists()
 
   const seeArticles = (idVolumen) => {
     localStorage.setItem('id_summary', idVolumen)
@@ -56,17 +57,6 @@ export default function Summaries() {
   const handleChangeList = (event) => {
     const { value, name } = event.target
     setInfoEnvio({ ...infoEnvio, [name]: value })
-  }
-
-  const getLists = () => {
-    getListsByEditor(infoUser._id, token)
-      .then((res) => setContactLists(res.data.mg_contact_lists))
-      .catch((error) => {
-        if (!axios.isCancel(error)) {
-          console.log("ererererer")
-          console.error(error);
-        }
-      })
   }
 
   const enviarSumario = () => {
@@ -93,11 +83,7 @@ export default function Summaries() {
 
   useEffect(() => {
     getSummaries()
-    getLists()
   }, [])
-
-
-
 
   return (
     <>
