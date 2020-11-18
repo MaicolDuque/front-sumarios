@@ -70,3 +70,15 @@ export const sendEmailSummary = async (data, token) => {
     }
   })
 }
+
+export const updatesInfoSummaryById = async (idSummary, data, token) => {
+  return axios({
+    method: "PUT",
+    baseURL: All.backend.url,
+    url: `/summaries/info/${idSummary}`,
+    data,
+    headers: {
+      token
+    }
+  })
+}

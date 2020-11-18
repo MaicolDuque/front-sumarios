@@ -10,11 +10,12 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import SendIcon from '@material-ui/icons/Send';
 import VisibilityIcon from '@material-ui/icons/Visibility';
-import { DialogContentText, FormControl, FormHelperText, InputLabel, Select } from '@material-ui/core';
+import EditIcon from '@material-ui/icons/Edit';
+import { DialogContentText, FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
 import axios from "axios";
+import { format } from 'date-fns'
 
-import { getAllSummaries, sendEmailSummary } from '../../services/summaryService'
-import { getListsByEditor } from '../../services/contactsService';
+import { getAllSummaries, sendEmailSummary, updatesInfoSummaryById } from '../../services/summaryService'
 import { ContextCreate } from '../../Auth/Context';
 import Spinner from '../../components/Spinner';
 import Modal from '../../components/Modal';
@@ -34,9 +35,12 @@ export default function Summaries() {
   const history = useHistory();
   const [cargando, setCargando] = useState(false);
   const [modal, setModal] = useState(false);
+  const [modalEdit, setModalEdit] = useState(false);
+  const [resfresh, setRefresh] = useState(false)
   const [infoEnvio, setInfoEnvio] = useState({ listaId: '', summaryId: '', name: '', description: '', error: false });
   const { infoUser, token } = useContext(ContextCreate);
   const [summaries, setSummaries] = useState([])
+  const [infoSumario, setInfoSumario] = useState({ name: '', description: '', favorite: false, errorNombre: false, id: '' })
   const { contactLists } = useContactLists()
 
   const seeArticles = (idVolumen) => {
@@ -81,9 +85,37 @@ export default function Summaries() {
     setInfoEnvio({ ...infoEnvio, name, description, summaryId: _id, name_magazine: infoUser.name_magazine })
   }
 
+  const showModalEdit = (summary) => {
+    setModalEdit(true)
+    setInfoSumario({ ...infoSumario, name: summary.name, description: summary.description, id: summary._id, favorite: summary.favorite })
+  }
+
+  const handleChangeInfoSumario = (event) => {
+    const value = event.target.value
+    const name = event.target.name
+    setInfoSumario({ ...infoSumario, [name]: value, errorNombre: false })
+  }
+
+  const updateSummary = () => {
+    if (infoSumario.name) {
+      setInfoSumario({ ...infoSumario, name: '', description: '', errorNombre: false })
+      setModalEdit(false)
+      setCargando(true)
+      updatesInfoSummaryById(infoSumario.id, infoSumario, token)
+        .then(res => { setCargando(false); setRefresh(!resfresh) })
+        .catch((error) => {
+          if (!axios.isCancel(error)) {
+            console.error(error);
+          }
+        })
+    } else {
+      setInfoSumario({ ...infoSumario, errorNombre: true })
+    }
+  }
+
   useEffect(() => {
     getSummaries()
-  }, [])
+  }, [resfresh])
 
   return (
     <>
@@ -115,6 +147,36 @@ export default function Summaries() {
           {infoEnvio.error && <FormHelperText>Debe seleccionar una lista</FormHelperText>}
         </FormControl>
       </Modal>
+
+      <Modal open={modalEdit} textOk='Guardar' close={() => setModalEdit(false)} title='Editar sumario' clickOk={updateSummary} >
+        <DialogContentText>
+          Ingrese nombre y descripción para editar el sumario.
+          </DialogContentText>
+        <TextField margin="normal"
+          error={infoSumario.errorNombre}
+          onChange={handleChangeInfoSumario} name="name" value={infoSumario.name}
+          helperText={infoSumario.errorNombre ? 'Debe ingresar un nombre' : ''}
+          autoFocus type="text" id="name" label="Nombre" variant="outlined" fullWidth /> <br />
+        <TextField margin="normal"
+          onChange={handleChangeInfoSumario} name="description"
+          value={infoSumario.description}
+          type="text" id="description"
+          label="Descripción" variant="outlined" fullWidth />
+        <FormControl variant="outlined" className={classes.formControl}>
+          <InputLabel id="demo-simple-select-outlined-label">Favorito</InputLabel>
+          <Select
+            labelId="demo-simple-select-outlined-label"
+            id="demo-simple-select-outlined"
+            value={infoSumario.favorite}
+            name="favorite"
+            onChange={handleChangeInfoSumario}
+            label="Favorito"
+          >
+            <MenuItem value={true}>SI</MenuItem>
+            <MenuItem value={false}>NO</MenuItem>
+          </Select>
+        </FormControl>
+      </Modal>
       <TableContainer component={Paper}>
         <Table className={classes.table} aria-label="simple table">
           <TableHead>
@@ -123,8 +185,7 @@ export default function Summaries() {
               <TableCell align="center">Descripcion</TableCell>
               <TableCell align="center">Favorito</TableCell>
               <TableCell align="center">Fecha creación</TableCell>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
+              <TableCell align="center" colSpan={3}>Acciones</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -133,8 +194,9 @@ export default function Summaries() {
                 <TableCell align="left"> {row.name}</TableCell>
                 <TableCell align="left">{row.description}</TableCell>
                 <TableCell align="center">{row.favorite ? 'SI' : 'NO'}</TableCell>
-                <TableCell align="center">{row.createdAt}</TableCell>
+                <TableCell align="center">{format(new Date(row.createdAt), 'yyyy-MM-dd K:m aaaa')}</TableCell>
                 <TableCell> <VisibilityIcon onClick={() => seeArticles(row._id)} titleAccess="Ver articulos" /></TableCell>
+                <TableCell> <EditIcon onClick={() => showModalEdit(row)} titleAccess="Editar sumario" /> </TableCell>
                 <TableCell> <SendIcon onClick={() => showModal(row)} titleAccess="Enviar sumario" /> </TableCell>
               </TableRow>
             ))}
