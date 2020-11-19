@@ -4,10 +4,12 @@ import Home from "./Pages/Home/index"
 import Register from "./Pages/Register/index"
 import AuthState from "./Auth/Context"
 import AuthRouter from "./Middleware/authRouter"
-import Search from "./Pages/ManageSummary/Search/index"
-import ContactsList from "./Pages/ManageContacts/ContactsList/index"
-import Summaries from "./Pages/Summaries/index"
-import Articles from "./Pages/Summaries/Articles/index"
+
+import Search from "./pages/ManageSummary/Search/index"
+import ContactsList from "./pages/ManageContacts/ContactsList"
+import Summaries from "./pages/Summaries"
+import Articles from "./pages/Summaries/Articles"
+import SendingHistory from "./pages/SendingHistory"
 
 const Routes = () => {
     return (
@@ -34,6 +36,7 @@ const Routes = () => {
                                 />
                                 <Route path="/summaries" exact component={Summaries} />
                                 <Route path="/summaries/articles" exact component={Articles} />
+                                <Route path="/history" exact component={SendingHistory} />
                             </AuthRouter>
                         </Switch>
                     </Home>

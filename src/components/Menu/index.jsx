@@ -62,12 +62,14 @@ export default function Menu({ window, mobileOpen, toggle }) {
             </ListItemIcon>
             <ListItemText secondary="Crear sumarios" />
           </ListItem>
-          <ListItem button className={classes.nested}>
-            <ListItemIcon>
-              <DraftsIcon />
-            </ListItemIcon>
-            <ListItemText secondary="Historial de envíos" />
-          </ListItem>
+          <Link to="/history" style={{ textDecoration: "none" }}>
+            <ListItem button className={classes.nested}>
+              <ListItemIcon>
+                <DraftsIcon />
+              </ListItemIcon>
+              <ListItemText secondary="Historial de envíos" />
+            </ListItem>
+          </Link>
         </List>
         <Divider />
         <ListItem button className={classes.listTitle}>

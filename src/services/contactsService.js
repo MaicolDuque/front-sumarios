@@ -1,8 +1,20 @@
 import axios from "axios";
+import All from "../config";
 
 //---------------------------------------- Contact services ------------------------------------------------------------------------------//
-export const getContacts = async (data) => {
-    const result = await axios(
+export const getListsByEditor = async (idUSer, token) => {
+  return axios({
+    method: "GET",
+    baseURL: All.backend.url,
+    url: `/contact-list/${idUSer}`,
+    headers: {
+      token
+    }
+  })
+}
+
+export const getContacts = async (data) => {    
+  const result = await axios(
       {
         method: "GET",
         baseURL: `${process.env.REACT_APP_PROTOCOL_BACKEND}://${process.env.REACT_APP_HOST_BACKEND}${process.env.REACT_APP_PORT_BACKEND}`,

@@ -58,3 +58,38 @@ export const updatesArticlesBySummary = async (idSummary, data, token) => {
     }
   })
 }
+
+export const sendEmailSummary = async (data, token) => {
+  return axios({
+    method: "POST",
+    baseURL: All.backend.url,
+    url: '/email/send-email',
+    data,
+    headers: {
+      token
+    }
+  })
+}
+
+export const updatesInfoSummaryById = async (idSummary, data, token) => {
+  return axios({
+    method: "PUT",
+    baseURL: All.backend.url,
+    url: `/summaries/info/${idSummary}`,
+    data,
+    headers: {
+      token
+    }
+  })
+}
+
+export const getHistorySendsByUser = async (idUser, token) => {
+  return axios({
+    method: "GET",
+    baseURL: All.backend.url,
+    url: `/email/${idUser}`,
+    headers: {
+      token
+    }
+  })
+}
