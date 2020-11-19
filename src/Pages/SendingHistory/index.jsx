@@ -47,7 +47,7 @@ export default function SendingHistory() {
               <TableRow key={row._id} style={{ cursor: 'pointer' }} >
                 <TableCell align="left"> {row.summary.name}</TableCell>
                 <TableCell align="left"> {row.summary.description}</TableCell>
-                <TableCell align="left"> {row.contact_list.name}</TableCell>
+                <TableCell align="left"> {row?.contact_list?.name || 'Lista ya no existe'}</TableCell>
                 <TableCell align="center">{format(new Date(row.createdAt), 'yyyy-MM-dd K:m aaaa')}</TableCell>
               </TableRow>
             ))}

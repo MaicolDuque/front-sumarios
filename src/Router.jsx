@@ -1,7 +1,7 @@
 import React from "react"
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
-import Home from "./Pages/Home/index"
-import Register from "./Pages/Register/index"
+import Home from "./pages/Home/index"
+import Register from "./pages/Register/index"
 import AuthState from "./Auth/Context"
 import AuthRouter from "./Middleware/authRouter"
 

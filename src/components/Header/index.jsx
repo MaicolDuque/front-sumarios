@@ -4,7 +4,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import { useGoogleLogout } from 'react-google-login';
 import { useHistory } from "react-router-dom";
 
-import Login from '../../Pages/Login';
+import Login from '../../pages/Login';
 import { ContextCreate } from '../../Auth/Context';
 
 const clientId = "647394978025-7tqu3po55pvko2aguma5iihggf05k8ms.apps.googleusercontent.com";
