@@ -1,14 +1,13 @@
 import React from "react"
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
-import Home from "./pages/Home"
-import Register from "./pages/Register"
+import Home from "./Pages/Home/index"
+import Register from "./Pages/Register/index"
 import AuthState from "./Auth/Context"
 import AuthRouter from "./Middleware/authRouter"
-import Search from "./pages/ManageSummary/Search/index"
-import Contacts from "./pages/ManageContacts/Contacts/index"
-import ContactsList from "./pages/ManageContacts/ContactsList"
-import Summaries from "./pages/Summaries"
-import Articles from "./pages/Summaries/Articles"
+import Search from "./Pages/ManageSummary/Search/index"
+import ContactsList from "./Pages/ManageContacts/ContactsList/index"
+import Summaries from "./Pages/Summaries/index"
+import Articles from "./Pages/Summaries/Articles/index"
 
 const Routes = () => {
     return (
@@ -27,11 +26,6 @@ const Routes = () => {
                                     path="/search"
                                     exact
                                     component={Search}
-                                />
-                                <Route
-                                    path="/contact"
-                                    exact
-                                    component={Contacts}
                                 />
                                 <Route
                                     path="/contactList"

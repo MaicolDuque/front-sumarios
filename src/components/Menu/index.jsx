@@ -76,15 +76,6 @@ export default function Menu({ window, mobileOpen, toggle }) {
         <List component="div" disablePadding className={classes.listTitle}>
           <ListItem button className={classes.nested}
             onClick={() => {
-              history.push("/contact");
-            }}>
-            <ListItemIcon>
-              <PermContactCalendarIcon />
-            </ListItemIcon>
-            <ListItemText secondary="Mis contactos" />
-          </ListItem>
-          <ListItem button className={classes.nested}
-            onClick={() => {
               history.push("/contactList");
             }}>
             <ListItemIcon>
