@@ -27,6 +27,7 @@ const Context = ({ children }) => {
             ...prevState,
             token: null,
             strData: "",
+            user:"",
         }));
         localStorage.removeItem("token");
         sessionStorage.removeItem("token");

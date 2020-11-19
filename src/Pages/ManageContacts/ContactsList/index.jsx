@@ -1,27 +1,40 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState, useRef } from 'react'
 import axios from "axios";
 import {
     Grid,
     Paper,
-    Tooltip,
     Typography,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
-    TablePagination,
-    Checkbox,
+    Button,
     TableRow,
+    TextField,
+    DialogContentText,
+    Tooltip
 } from '@material-ui/core';
 import { makeStyles } from "@material-ui/core/styles";
-import CreateIcon from '@material-ui/icons/Create';
-import DeleteIcon from '@material-ui/icons/Delete';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import PermContactCalendarIcon from '@material-ui/icons/PermContactCalendar';
+import SystemUpdateAltIcon from '@material-ui/icons/SystemUpdateAlt';
+import SpeedDial from '@material-ui/lab/SpeedDial';
+import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
+import { withSnackbar } from "notistack";
+
 
 //Context
 import { ContextCreate } from "../../../Auth/Context";
+import DeleteContact from '../../../components/Contacts/DeleteContact';
+import AddContact from '../../../components/Contacts/AddContact'
+import Modal from '../../../components/Modal';
+import UpdateContact from '../../../components/Contacts/UpdateContact'
 
-import { getContactsList } from '../../../services/contactsService'
+import { getContactsList, getContacts, createContactList, deleteContactList, updateContactList } from '../../../services/contactsService'
 
 const infoStyles = makeStyles({
     paper: {
@@ -41,7 +54,7 @@ const infoStyles = makeStyles({
         marginRight: "200px",
     },
     color: {
-        background: "#196844"
+        backgroundColor: "#196844"
     },
     table: {
         marginTop: "20px",
@@ -50,32 +63,63 @@ const infoStyles = makeStyles({
 });
 
 
-export default function ContactList() {
+const ContactList = ({ enqueueSnackbar }) => {
     const classes = infoStyles();
     const { infoUser } = useContext(ContextCreate);
     const [data, setData] = useState([])
-    const dataContacts = [];
-    let getContactsListInfo = () => {
-        getContactsList(infoUser.mg_contact_lists)
-            .then((res) => {
-                // const arra = res.data
-                // arra.forEach(dataContactList => {
-                //     let integrant = []
-                //     dataContactList.mg_contacts.forEach((element) => {
-                //         integrant.push({
-                //             email: element.c_email
-                //         })
-                //     })
-                //     dataContacts.push({
-                //         id: dataContactList._id,
-                //         nameList: dataContactList.name,
-                //         description: dataContactList.description,
-                //         integrants: integrant
-                //     })
-                // })
-                console.log(res.data)
-                setData(res.data)
+    const [dataContactList, setDataContactList] = useState({
+        name: "",
+        description: "",
+        mg_contacts: [""]
+    })
+    const enqueueSnackbarRef = useRef(enqueueSnackbar);
 
+    const [idContactList, setIdContactList] = useState({
+        id:""
+    })
+    const dataContactsOfList = []
+    const [flagCreateList, setFlagCreateList] = useState(false); //Change information of Modal between create and update contact list
+    const [dataContacts, setDataContact] = useState([]);
+    const [resultCreateContactList, setResultCreateContactList] = useState()
+    const [modal, setModal] = useState(false);
+    const [addModal, setAddModal] = useState(false)
+    const [updateModal, setUpdateModal] = useState(false)
+    const [deleteModal, setDeleteModal] = useState(false)
+    const [open, setOpen] = useState(false);
+
+    const clean = () => {
+        setDataContactList({
+            ...dataContactList,
+            name: "",
+            description: "",
+            mg_contacts: [""]
+        })
+    }
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+    let getContactsInfo = () => {
+        getContacts(infoUser.mg_contact_lists)
+            .then((res) => {
+                setDataContact(res.data.mg_contacts)
+            })
+            .catch((error) => {
+                if (!axios.isCancel(error)) {
+                    console.log("ererererer")
+                    console.error(error);
+                }
+            })
+    }
+
+    let getContactsListInfo = () => {
+        getContactsList(infoUser._id)
+            .then((res) => {
+                setData(res.data.mg_contact_lists)
             })
             .catch((error) => {
                 if (!axios.isCancel(error)) {
@@ -85,74 +129,260 @@ export default function ContactList() {
             })
 
     }
+    const closeContactModal = () => {
+        setAddModal(false)
+        setDeleteModal(false)
+        setUpdateModal(false)
+        setResultCreateContactList('Acciones realizadas')
+    }
+    const closeModal = () => {
+        clean()
+        setModal(false)
+    }
+
+    const btnAddContact = () => {
+        handleClose()
+        setAddModal(true)
+    }
+    const btnUpdateContact = () => {
+        setUpdateModal(true)
+        handleClose()
+    }
+    const btnDeleteContact = () => {
+        handleClose()
+        setDeleteModal(true)
+    }
+    const createCL = () => {
+        const mgContacts = []
+        dataContactList.mg_contacts.map((item) => {
+            mgContacts.push(item._id)
+        })
+        setDataContactList({ ...dataContactList, mg_contacts: mgContacts })
+        const infoSend = {
+            id_user: infoUser._id,
+            mg_contact_lists: dataContactList
+        }
+        createContactList(infoSend)
+            .then(res => {
+                console.log(res)
+                enqueueSnackbarRef.current(res.data.msg, {
+                    variant: "success",
+                });
+                setResultCreateContactList(res)
+            })
+            .catch((error) => {
+                if (!axios.isCancel(error)) {
+                    console.error(error);
+                }
+            })
+        setFlagCreateList(false)
+        setModal(false)
+        clean()
+    }
+
+    const updateCL = () => {
+        updateContactList(dataContactList, idContactList)
+        .then(res=>{
+            if(!res.data.error){
+                setResultCreateContactList(res)
+                enqueueSnackbarRef.current(res.data.msg, {
+                    variant: "success",
+                });
+            }
+            
+        })
+        .catch((res) =>{
+            if (res.data.error) {
+                enqueueSnackbarRef.current(res.data.msg, {
+                    variant: "error",
+                });
+            }
+        })
+        setModal(false)
+        clean()
+    }
+
+    const deleteCL = (idContactList) => {
+        deleteContactList(idContactList)
+            .then(res => {
+                enqueueSnackbarRef.current(res.data.msg, {
+                    variant: "success",
+                });
+                setResultCreateContactList(res)
+            })
+            .catch((error) => {
+                if (!axios.isCancel(error)) {
+                    console.error(error);
+                }
+            })
+    }
+
+    const onClickGetContactList = (contactList) => {
+        setIdContactList(contactList._id)
+        getContacts(contactList._id)
+            .then((res) => {
+                res.data.mg_contacts.map((item) => {
+                    dataContactsOfList.push(item)
+                })
+                console.log(dataContactsOfList)
+                setDataContactList({
+                    ...dataContactList,
+                    name: contactList.name,
+                    description: contactList.description,
+                    mg_contacts: dataContactsOfList
+                })
+                setModal(true)
+            })
+            .catch((error) => {
+                if (!axios.isCancel(error)) {
+                    console.error(error);
+                }
+            })
+    }
+
+    const onClickCreateContactList = () => {
+        setFlagCreateList(true)
+        setModal(true)
+    }
+
     useEffect(() => {
         getContactsListInfo()
-    }, [])
+        getContactsInfo()
+    }, [resultCreateContactList])
     return (
-        <Paper elevation={3} className={classes.paper}>
-            <Grid
-                item
-                direction="column"
-                container>
-                <Grid>
-                    <Typography variant="h3" component="h2" gutterBottom align="center" style={{ color: "#196844" }}>Lista de Contactos</Typography>
-                </Grid>
-                <Grid
-                    container
-                    direction="colum"
-                    justify="flex-end">
-                    <Tooltip title="Crear lista" arrow>
-                        <CreateIcon style={{ color: "#196844" }} fontSize="large" />
-                    </Tooltip>
-                    <Tooltip title="Eliminar" arrow>
-                        <DeleteIcon style={{ color: "#A93226" }} fontSize="large" />
-                    </Tooltip>
-                </Grid>
-
-                <Grid item style={{ height: 400, width: '100%' }} className={classes.table}>
-                    {data.length === 0 ? null : (
-                        <Grid container>
-                            <TableContainer component={Paper}>
-                                <Table>
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography>Nombre de la lista</Typography>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography>Descripción</Typography>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography>Integrantes</Typography>
-                                            </TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {data.map((item) => (
-                                            <TableRow key={item.id} >
-                                                <TableCell>
-                                                    <Checkbox color="primary" value={item.id} name="listArticles"></Checkbox>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <Typography >{item.name}</Typography>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <Typography style={{ color: "#196844" }}>{item.description}</Typography>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <Typography style={{ color: "#196844" }}>{}</Typography>
-                                                </TableCell>
-                                            </TableRow>))
-                                        }
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        </Grid>)}
-                </Grid>
+        <>
+            <UpdateContact dataContact={dataContacts} open={updateModal} close={closeContactModal}/>
+            <AddContact dataContactList={data} open={addModal} close={closeContactModal} />
+            <DeleteContact dataContactList={dataContacts} open={deleteModal} close={closeContactModal} />
+            <Modal open={modal} textOk="Guardar" close={closeModal} title={flagCreateList ? ("Crear lista") : ("Actualizar lista")} clickOk={() => { flagCreateList ? createCL() : updateCL() }} >
+                <DialogContentText>
+                    {flagCreateList ? ("Integrese el nombre, la descripción y los contactos que pertenecerán a la lista.") :
+                        ("Puede cambiar el nombre, la descripción y los contactos que pertenecerán a la lista.")}
+                </DialogContentText>
+                <TextField margin="normal"
+                    name="txt_nameList" value={dataContactList.name}
+                    onChange={(event) => {
+                        setDataContactList({ ...dataContactList, name: event.target.value })
+                    }}
+                    autoFocus type="text" id="nameList" label="Nombre de la lista" variant="outlined" fullWidth /> <br />
+                <TextField margin="normal"
+                    name="txt_description"
+                    value={dataContactList.description}
+                    type="text" id="description"
+                    onChange={(event) => {
+                        setDataContactList({ ...dataContactList, description: event.target.value })
+                    }}
+                    label="Descripción" variant="outlined" fullWidth /> <p />
+                <Autocomplete
+                    multiple
+                    id="listContact"
+                    options={dataContacts}
+                    onChange={(event, newValue) => {
+                        setDataContactList({ ...dataContactList, mg_contacts: ((newValue === null) ? "" : newValue) })
+                    }}
+                    getOptionLabel={(option) => option.c_name}
+                    getOptionSelected={(option, value) => option.c_name === value.c_name}
+                    filterSelectedOptions
+                    value={dataContactList.mg_contacts}
+                    renderInput={(params) => (
+                        <TextField
+                            {...params}
+                            variant="outlined"
+                            label="Contactos"
+                        />
+                    )}
+                />
+            </Modal>
+            <Grid>
+                <Typography variant="h3" component="h2" gutterBottom align="center" style={{ color: "#196844" }}>Lista de Contactos</Typography>
             </Grid>
 
-        </Paper>
+            <Grid item style={{ height: 400, width: '100%' }} className={classes.table}>
+                <Grid container direction="column">
+                    <Grid container>
+                        <Tooltip title="Contactos" placement="left">
+                            <SpeedDial
+                                ariaLabel="Contacto"
+                                icon={<PermContactCalendarIcon />}
+                                onClose={handleClose}
+                                onClick={handleOpen}
+                                open={open}
+                                direction='right'
+                            >
+                                <SpeedDialAction
+                                    key='AddContact'
+                                    icon={<AddCircleIcon />}
+                                    tooltipTitle='Agregar contacto'
+                                    placement="top"
+                                    onClick={btnAddContact}
+                                />
+                                <SpeedDialAction
+                                    key='UpdateContact'
+                                    icon={<SystemUpdateAltIcon />}
+                                    tooltipTitle='Actualizar contacto'
+                                    placement="top"
+                                    onClick={btnUpdateContact}
+                                />
+                                <SpeedDialAction
+                                    key='DeleteContact'
+                                    icon={<DeleteForeverIcon />}
+                                    tooltipTitle='Eliminar contacto'
+                                    placement="top"
+                                    onClick={btnDeleteContact}
+                                />
+                            </SpeedDial>
+                        </Tooltip>
+                    </Grid>
+
+                    <br />
+                    <Grid>
+                        <TableContainer component={Paper}>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>
+                                            <Button variant="contained" color="primary" onClick={() => onClickCreateContactList()} startIcon={<AddCircleIcon />}>Crear lista</Button>
+                                        </TableCell>
+                                        <TableCell />
+                                        <TableCell />
+                                        <TableCell />
+                                        <TableCell />
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell>
+                                            <Typography>Nombre de la lista</Typography>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Typography>Descripción</Typography>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Typography>Fecha de creación</Typography>
+                                        </TableCell>
+                                        <TableCell />
+                                        <TableCell />
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {data.length === 0 ? (null) : (
+                                        data.map((item) => (
+                                            <TableRow key={item._id} style={{ cursor: 'pointer' }}>
+                                                <TableCell>{item.name}</TableCell>
+                                                <TableCell>{item.description}</TableCell>
+                                                <TableCell>{item.createdAt}</TableCell>
+                                                <TableCell><Button startIcon={<VisibilityIcon />} onClick={() => onClickGetContactList(item)} /></TableCell>
+                                                <TableCell><Button startIcon={<DeleteForeverIcon style={{ color: '#A93226' }} />} onClick={() => deleteCL(item._id)} /></TableCell>
+                                            </TableRow>))
+                                    )
+                                    }
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Grid>
+
+                </Grid>
+            </Grid>
+        </>
     )
 }
+
+export default withSnackbar(ContactList);
