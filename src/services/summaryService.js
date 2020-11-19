@@ -82,3 +82,14 @@ export const updatesInfoSummaryById = async (idSummary, data, token) => {
     }
   })
 }
+
+export const getHistorySendsByUser = async (idUser, token) => {
+  return axios({
+    method: "GET",
+    baseURL: All.backend.url,
+    url: `/email/${idUser}`,
+    headers: {
+      token
+    }
+  })
+}

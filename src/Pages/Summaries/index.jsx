@@ -37,7 +37,7 @@ export default function Summaries() {
   const [modal, setModal] = useState(false);
   const [modalEdit, setModalEdit] = useState(false);
   const [resfresh, setRefresh] = useState(false)
-  const [infoEnvio, setInfoEnvio] = useState({ listaId: '', summaryId: '', name: '', description: '', error: false });
+  const [infoEnvio, setInfoEnvio] = useState({ userId: '', listaId: '', summaryId: '', name: '', description: '', error: false });
   const { infoUser, token } = useContext(ContextCreate);
   const [summaries, setSummaries] = useState([])
   const [infoSumario, setInfoSumario] = useState({ name: '', description: '', favorite: false, errorNombre: false, id: '' })
@@ -82,7 +82,7 @@ export default function Summaries() {
 
   const showModal = ({ name, description, _id }) => {
     setModal(true)
-    setInfoEnvio({ ...infoEnvio, name, description, summaryId: _id, name_magazine: infoUser.name_magazine })
+    setInfoEnvio({ ...infoEnvio, name, description, summaryId: _id, name_magazine: infoUser.name_magazine, userId: infoUser._id })
   }
 
   const showModalEdit = (summary) => {

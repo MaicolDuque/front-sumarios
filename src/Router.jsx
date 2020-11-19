@@ -9,6 +9,7 @@ import Contacts from "./pages/ManageContacts/Contacts/index"
 import ContactsList from "./pages/ManageContacts/ContactsList"
 import Summaries from "./pages/Summaries"
 import Articles from "./pages/Summaries/Articles"
+import SendingHistory from "./pages/SendingHistory"
 
 const Routes = () => {
     return (
@@ -40,6 +41,7 @@ const Routes = () => {
                                 />
                                 <Route path="/summaries" exact component={Summaries} />
                                 <Route path="/summaries/articles" exact component={Articles} />
+                                <Route path="/history" exact component={SendingHistory} />
                             </AuthRouter>
                         </Switch>
                     </Home>

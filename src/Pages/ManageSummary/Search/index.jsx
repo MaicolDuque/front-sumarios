@@ -74,7 +74,7 @@ export default function Search() {
   const [modal, setModal] = useState(false);
   const [cargando, setCargando] = useState(false);
   const { infoUser, token } = useContext(ContextCreate);
-  const [infoSumario, setInfoSumario] = useState({ name: '', description: '', list_articles: [], list_keywords: [], favorite: false, user_id: '', errorNombre: false })
+  const [infoSumario, setInfoSumario] = useState({ userId: '', name: '', description: '', list_articles: [], list_keywords: [], favorite: false, user_id: '', errorNombre: false })
   const [infoSendSummary, setInfoSendSummary] = useState({ listaId: '', error: false, show: false })
   const { contactLists } = useContactLists()
 
@@ -112,7 +112,7 @@ export default function Search() {
 
   const crearSumario = (isToSend = false) => {
     setInfoSendSummary({ ...infoSendSummary, show: isToSend })
-    setInfoSumario({ ...infoSumario, list_keywords: listKeywords, user_id: infoUser._id })
+    setInfoSumario({ ...infoSumario, list_keywords: listKeywords, user_id: infoUser._id, userId: infoUser._id })
     setModal(true)
   }
 
