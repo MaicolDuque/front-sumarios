@@ -76,7 +76,7 @@
   left: 0;
   width: 100%;
   background-color: hsl(0deg 0% 98% / 60%);
-  position: absolute;
+  position: fixed;
   z-index: 2;
   height: 100%;
 }

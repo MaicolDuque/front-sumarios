@@ -11,7 +11,7 @@ import Paper from '@material-ui/core/Paper';
 import SendIcon from '@material-ui/icons/Send';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import EditIcon from '@material-ui/icons/Edit';
-import { DialogContentText, FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
+import { DialogContentText, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, TextField, Typography } from '@material-ui/core';
 import axios from "axios";
 import { format } from 'date-fns'
 
@@ -120,6 +120,9 @@ export default function Summaries() {
   return (
     <>
       { cargando && <Spinner />}
+      <Grid>
+        <Typography variant="h3" component="h2" gutterBottom align="center" style={{ color: "#196844" }}>Mis sumarios</Typography>
+      </Grid>
       <Modal open={modal} textOk="Enviar" close={() => setModal(false)} title="Enviar sumario" clickOk={enviarSumario} >
         <DialogContentText>
           Seleccione la lista de contactos para enviar el sumario

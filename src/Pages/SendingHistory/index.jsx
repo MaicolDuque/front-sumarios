@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import Paper from '@material-ui/core/Paper';
-import { makeStyles, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core'
+import { Grid, makeStyles, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@material-ui/core'
 
 import { getHistorySendsByUser } from '../../services/summaryService'
 import { ContextCreate } from '../../Auth/Context';
@@ -32,6 +32,9 @@ export default function SendingHistory() {
   return (
     <>
       { cargando && <Spinner />}
+      <Grid>
+        <Typography variant="h3" component="h2" gutterBottom align="center" style={{ color: "#196844" }}>Historial de envíos</Typography>
+      </Grid>
       <TableContainer component={Paper}>
         <Table className={classes.table} aria-label="simple table">
           <TableHead>

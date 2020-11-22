@@ -11,3 +11,27 @@ export const getArticlesByVolume = async (idUSer, token) => {
     }
   })
 }
+
+export const indexarVolumeService = async (idVolume, token) => {
+  return axios({
+    method: "POST",
+    baseURL: All.backend.url,
+    url: `/scraping/indexar`,
+    data: { idVolume },
+    headers: {
+      token
+    }
+  })
+}
+
+export const refreshVolumesMagazineService = async (data, token) => {
+  return axios({
+    method: "POST",
+    baseURL: All.backend.url,
+    url: `/scraping/volumes-magazine`,
+    data,
+    headers: {
+      token
+    }
+  })
+}

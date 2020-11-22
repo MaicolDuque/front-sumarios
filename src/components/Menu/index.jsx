@@ -7,7 +7,7 @@ import CreateIcon from '@material-ui/icons/Create';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import DraftsIcon from '@material-ui/icons/Drafts';
 import FaceIcon from '@material-ui/icons/Face';
-import PermContactCalendarIcon from '@material-ui/icons/PermContactCalendar';
+import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 import { useHistory, Link } from "react-router-dom";
 import { ContextCreate } from '../../Auth/Context';
 
@@ -68,6 +68,14 @@ export default function Menu({ window, mobileOpen, toggle }) {
                 <DraftsIcon />
               </ListItemIcon>
               <ListItemText secondary="Historial de envíos" />
+            </ListItem>
+          </Link>
+          <Link to="/magazines" style={{ textDecoration: "none" }}>
+            <ListItem button className={classes.nested}>
+              <ListItemIcon>
+                <LibraryBooksIcon />
+              </ListItemIcon>
+              <ListItemText secondary="Revistas" />
             </ListItem>
           </Link>
         </List>

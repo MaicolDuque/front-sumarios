@@ -20,24 +20,27 @@ import {
   Link,
   Select,
   FormHelperText,
+  Tooltip,
 } from '@material-ui/core';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import TextField from '@material-ui/core/TextField';
 import SearchIcon from '@material-ui/icons/Search';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import SendIcon from '@material-ui/icons/Send';
+import InfoIcon from '@material-ui/icons/Info';
 
 import { ContextCreate } from "../../../Auth/Context"; //Context
 import { getArticlesByKeyword, createSummary, sendEmailSummary } from '../../../services/summaryService'
 import Modal from '../../../components/Modal';
 import Spinner from '../../../components/Spinner';
 import useContactLists from '../../../hooks/useContactLists';
+import { useSnackbar } from 'notistack';
 
 
 const infoStyles = makeStyles((theme) => ({
   title: {
     marginBottom: "30px",
-    marginTop: '10px',
+    marginTop: '20px',
     minWidth: '210px',
     maxWidth: '100%',
     marginRight: 'auto',
@@ -68,6 +71,7 @@ const infoStyles = makeStyles((theme) => ({
 
 export default function Search() {
   const classes = infoStyles();
+  const { enqueueSnackbar } = useSnackbar();
   const [groupKey, setGroupKey] = useState([]);
   const [listKeywords, setListKeywords] = useState([]);
   const [data, setData] = useState({ keyword: "" })
@@ -96,11 +100,12 @@ export default function Search() {
 
   let getArticlesList = () => {
     setCargando(true)
+    setGroupKey([])
     getArticlesByKeyword(data)
       .then((res) => {
         setCargando(false)
-        setListKeywords(Object.keys(res.data[0].list_keywords))
-        setGroupKey(res.data)
+        setListKeywords(data.keyword.trim().toUpperCase().split(","))
+        setGroupKey(res.data.slice(0, 30))
       })
       .catch((error) => {
         if (!axios.isCancel(error)) {
@@ -117,6 +122,7 @@ export default function Search() {
   }
 
   const saveSummary = () => {
+    let mensaje = 'Sumario creado exitosamente!'
     console.log(infoSumario)
     if (infoSendSummary.show && !infoSendSummary.listaId) {
       setInfoSendSummary({ ...infoSendSummary, error: true })
@@ -132,12 +138,13 @@ export default function Search() {
         .then(res => {
           setCargando(false);
           const { name, description } = infoSumario
-          const data = { summaryId: res.data._id, name, description, name_magazine: infoUser.name_magazine, listaId: infoSendSummary.listaId }
+          const data = { summaryId: res.data._id, name, description, name_magazine: infoUser.name_magazine, listaId: infoSendSummary.listaId, userId: infoUser._id }
           if (infoSendSummary.show) {
+            mensaje = 'Sumario creado y enviado exitosamente!'
             return sendEmailSummary(data, token)
           }
         })
-        .then((res) => setCargando(false))
+        .then((res) => { setCargando(false); enqueueSnackbar(mensaje, { variant: 'success' }) })
         .catch((error) => {
           if (!axios.isCancel(error)) {
             console.error(error);
@@ -161,9 +168,9 @@ export default function Search() {
   return (
     <>
       { cargando && <Spinner />}
-      <Modal open={modal} textOk={infoSendSummary.show ? 'Guardar y enviar' : 'Guardar'} 
-            close={cerrarModal} title={infoSendSummary.show ? 'Crear y enviar sumario' : 'Crear sumario'} 
-            clickOk={saveSummary} >
+      <Modal open={modal} textOk={infoSendSummary.show ? 'Guardar y enviar' : 'Guardar'}
+        close={cerrarModal} title={infoSendSummary.show ? 'Crear y enviar sumario' : 'Crear sumario'}
+        clickOk={saveSummary} >
         <DialogContentText>
           Ingrese nombre y descripción para crear el sumario.
           </DialogContentText>
@@ -201,10 +208,8 @@ export default function Search() {
             {infoSendSummary.error && <FormHelperText>Debe seleccionar una lista</FormHelperText>}
           </FormControl>}
       </Modal>
-      <Grid>
-        <Grid container
-          direction="row-reverse"
-        >
+      <Grid container style={{ marginTop: '60px'}}>
+        <Grid container xs={11} direction="row-reverse" >
           <FormControl variant="outlined" fullWidth>
             <OutlinedInput
               id="txt_keyword"
@@ -229,6 +234,11 @@ export default function Search() {
           >
             Buscar
             </Button>
+        </Grid>
+        <Grid container xs={1}>
+          <Tooltip color="primary" title="Para buscar por varias palabras, se deben separar con una coma (,). Solo se permite un máximo de 3 letras por búsqueda." placement="top" arrow>
+            <InfoIcon fontSize="large" style={{ marginTop: '10px', marginLeft: '10px' }} />
+          </Tooltip>
         </Grid>
       </Grid>
 
@@ -271,7 +281,18 @@ export default function Search() {
                       <Typography style={{ color: "#196844" }} >{item.title}</Typography>
                       <Typography variante="subtitle1" className={classes.nested} >{item.authors}</Typography>
                       <Link target="_blank" href={item.urlHtml} variante="subtitle1" className={classes.nested} >{item.urlHtml}</Link>
-                      <Typography variante="subtitle1" className={classes.nested} >Keywords: {data.keyword}: {item.list_keywords[data.keyword.toUpperCase()]}</Typography>
+                      <Typography variante="subtitle1" className={classes.nested} >
+                        Keywords: &nbsp;
+                        {item.list_keywords[data.keyword.split(",")[0]?.toUpperCase().trim()] &&
+                          `${data.keyword.split(",")[0]}:  ${item.list_keywords[data.keyword.split(",")[0]?.toUpperCase().trim()]} `
+                        }
+                        {item.list_keywords[data.keyword.split(",")[1]?.toUpperCase().trim()] &&
+                          `${data.keyword.split(",")[1]}:  ${item.list_keywords[data.keyword.split(",")[1]?.toUpperCase().trim()]} `
+                        }
+                        {item.list_keywords[data.keyword.split(",")[2]?.toUpperCase().trim()] &&
+                          `${data.keyword.split(",")[2]}:  ${item.list_keywords[data.keyword.split(",")[2]?.toUpperCase().trim()]} `
+                        }
+                      </Typography>
                     </TableCell>
                   </TableRow>))
                 }

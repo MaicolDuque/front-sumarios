@@ -10,6 +10,8 @@ import ContactsList from "./pages/ManageContacts/ContactsList"
 import Summaries from "./pages/Summaries"
 import Articles from "./pages/Summaries/Articles"
 import SendingHistory from "./pages/SendingHistory"
+import Magazines from "./pages/Magazines"
+import Volumes from "./pages/Magazines/Volumes"
 
 const Routes = () => {
     return (
@@ -37,6 +39,8 @@ const Routes = () => {
                                 <Route path="/summaries" exact component={Summaries} />
                                 <Route path="/summaries/articles" exact component={Articles} />
                                 <Route path="/history" exact component={SendingHistory} />
+                                <Route path="/magazines" exact component={Magazines} />
+                                <Route path="/magazines/volumes" exact component={Volumes} />
                             </AuthRouter>
                         </Switch>
                     </Home>
