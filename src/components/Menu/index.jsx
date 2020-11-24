@@ -82,7 +82,7 @@ export default function Menu({ window, mobileOpen, toggle }) {
           </CustomLink>
         </List>
 
-        {infoUser.mg_role === 'editor' &&
+        {infoUser?.mg_role === 'editor' &&
           <> <Divider />
           <ListItem button className={classes.listTitle}>
             <ListItemText primary="Contactos" />

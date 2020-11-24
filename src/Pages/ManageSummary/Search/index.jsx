@@ -214,6 +214,7 @@ export default function Search() {
             <OutlinedInput
               id="txt_keyword"
               name="keyword"
+              label="Buscar"
               value={data.keyword}
               onChange={handleSearchChange}
               endAdornment={

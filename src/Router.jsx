@@ -13,6 +13,7 @@ import SendingHistory from "./pages/SendingHistory"
 import Magazines from "./pages/Magazines"
 import Volumes from "./pages/Magazines/Volumes"
 import CustomRoute from "./components/CustomRoute"
+import SummariesMagazine from "./pages/Magazines/Summaries"
 
 const Routes = () => {
 	return (
@@ -30,6 +31,7 @@ const Routes = () => {
 								<CustomRoute condition="editor" path="/history" exact component={SendingHistory} />
 								<CustomRoute condition="admin" path="/magazines" exact component={Magazines} />
 								<CustomRoute condition="admin" path="/magazines/volumes" exact component={Volumes} />
+								<CustomRoute condition="admin" path="/magazines/summaries" exact component={SummariesMagazine} />
 							</AuthRouter>
 						</Switch>
 					</Home>
