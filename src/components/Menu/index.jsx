@@ -2,14 +2,16 @@ import { Divider, Drawer, Hidden, List, ListItem, ListItemIcon, ListItemText } f
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import SubjectIcon from '@material-ui/icons/Subject';
 import CreateIcon from '@material-ui/icons/Create';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import DraftsIcon from '@material-ui/icons/Drafts';
+import SubjectIcon from '@material-ui/icons/Subject';
 import FaceIcon from '@material-ui/icons/Face';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
-import { useHistory, Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
+
 import { ContextCreate } from '../../Auth/Context';
+import CustomLink from '../CustomLink';
 
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
@@ -25,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Menu({ window, mobileOpen, toggle }) {
-  const { token } = useContext(ContextCreate);
+  const { token, infoUser } = useContext(ContextCreate);
   const theme = useTheme();
   const classes = useStyles();
   const history = useHistory();
@@ -43,57 +45,58 @@ export default function Menu({ window, mobileOpen, toggle }) {
           <ListItemText primary="Sumarios" />
         </ListItem>
         <List component="div" disablePadding className={classes.listTitle}>
-          <Link to="/summaries" style={{ textDecoration: "none" }}>
-            <ListItem button className={classes.nested}  >
+          <CustomLink condition="editor" to="/summaries" style={{ textDecoration: "none" }}>
+            <ListItem button className={classes.nested}>
               <ListItemIcon>
                 <SubjectIcon />
               </ListItemIcon>
               <ListItemText secondary="Mis sumarios" />
             </ListItem>
-          </Link>
-          <ListItem
-            button
-            className={classes.nested}
-            onClick={() => {
-              history.push("/search");
-            }}>
-            <ListItemIcon>
-              <CreateIcon />
-            </ListItemIcon>
-            <ListItemText secondary="Crear sumarios" />
-          </ListItem>
-          <Link to="/history" style={{ textDecoration: "none" }}>
+          </CustomLink>
+
+          <CustomLink condition="editor" to="/search" style={{ textDecoration: "none" }}>
+            <ListItem button className={classes.nested}>
+              <ListItemIcon>
+                <CreateIcon />
+              </ListItemIcon>
+              <ListItemText secondary="Crear sumarios" />
+            </ListItem>
+          </CustomLink>
+
+          <CustomLink condition="editor" to="/history" style={{ textDecoration: "none" }}>
             <ListItem button className={classes.nested}>
               <ListItemIcon>
                 <DraftsIcon />
               </ListItemIcon>
               <ListItemText secondary="Historial de envíos" />
             </ListItem>
-          </Link>
-          <Link to="/magazines" style={{ textDecoration: "none" }}>
+          </CustomLink>
+
+          <CustomLink condition="admin" to="/magazines" style={{ textDecoration: "none" }}>
             <ListItem button className={classes.nested}>
               <ListItemIcon>
                 <LibraryBooksIcon />
               </ListItemIcon>
               <ListItemText secondary="Revistas" />
             </ListItem>
-          </Link>
+          </CustomLink>
         </List>
-        <Divider />
-        <ListItem button className={classes.listTitle}>
-          <ListItemText primary="Contactos" />
-        </ListItem>
-        <List component="div" disablePadding className={classes.listTitle}>
-          <ListItem button className={classes.nested}
-            onClick={() => {
-              history.push("/contactList");
-            }}>
+
+        {infoUser.mg_role === 'editor' &&
+          <> <Divider />
+          <ListItem button className={classes.listTitle}>
+            <ListItemText primary="Contactos" />
+          </ListItem> </>}
+
+        <CustomLink condition="editor" to="/contactList" style={{ textDecoration: "none" }}>
+          <ListItem button className={classes.nested}>
             <ListItemIcon>
               <ListAltIcon />
             </ListItemIcon>
             <ListItemText secondary="Listas de contactos" />
           </ListItem>
-        </List>
+        </CustomLink>
+
         <Divider />
         <ListItem button className={classes.listTitle}>
           <ListItemText primary="Perfil" />

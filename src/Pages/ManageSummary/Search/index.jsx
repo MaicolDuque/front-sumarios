@@ -236,7 +236,7 @@ export default function Search() {
             </Button>
         </Grid>
         <Grid container xs={1}>
-          <Tooltip color="primary" title="Para buscar por varias palabras, se deben separar con una coma (,). Solo se permite un máximo de 3 letras por búsqueda." placement="top" arrow>
+          <Tooltip color="primary" title="Para buscar por varias palabras, se deben separar con una coma (,). Solo se permite un máximo de 3 palabras por búsqueda." placement="top" arrow>
             <InfoIcon fontSize="large" style={{ marginTop: '10px', marginLeft: '10px' }} />
           </Tooltip>
         </Grid>
@@ -283,14 +283,17 @@ export default function Search() {
                       <Link target="_blank" href={item.urlHtml} variante="subtitle1" className={classes.nested} >{item.urlHtml}</Link>
                       <Typography variante="subtitle1" className={classes.nested} >
                         Keywords: &nbsp;
-                        {item.list_keywords[data.keyword.split(",")[0]?.toUpperCase().trim()] &&
-                          `${data.keyword.split(",")[0]}:  ${item.list_keywords[data.keyword.split(",")[0]?.toUpperCase().trim()]} `
+                        {data.keyword.split(",")[0] &&
+                          `${data.keyword.split(",")[0]}:  ${item.list_keywords[data.keyword.split(",")[0]?.toUpperCase().trim()] ? 
+                          item.list_keywords[data.keyword.split(",")[0]?.toUpperCase().trim()] : 0} `
                         }
-                        {item.list_keywords[data.keyword.split(",")[1]?.toUpperCase().trim()] &&
-                          `${data.keyword.split(",")[1]}:  ${item.list_keywords[data.keyword.split(",")[1]?.toUpperCase().trim()]} `
+                        {data.keyword.split(",")[1] &&
+                          `${data.keyword.split(",")[1]}:  ${item.list_keywords[data.keyword.split(",")[1]?.toUpperCase().trim()] ?
+                          item.list_keywords[data.keyword.split(",")[1]?.toUpperCase().trim()] : 0} `
                         }
-                        {item.list_keywords[data.keyword.split(",")[2]?.toUpperCase().trim()] &&
-                          `${data.keyword.split(",")[2]}:  ${item.list_keywords[data.keyword.split(",")[2]?.toUpperCase().trim()]} `
+                        {data.keyword.split(",")[2] &&
+                          `${data.keyword.split(",")[2]}:  ${item.list_keywords[data.keyword.split(",")[2]?.toUpperCase().trim()] ? 
+                          item.list_keywords[data.keyword.split(",")[2]?.toUpperCase().trim()] : 0} `
                         }
                       </Typography>
                     </TableCell>
