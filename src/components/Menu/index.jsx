@@ -8,8 +8,8 @@ import DraftsIcon from '@material-ui/icons/Drafts';
 import SubjectIcon from '@material-ui/icons/Subject';
 import FaceIcon from '@material-ui/icons/Face';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
+import NotificationsIcon from '@material-ui/icons/Notifications';
 import HomeIcon from '@material-ui/icons/Home';
-import { useHistory } from "react-router-dom";
 
 import { ContextCreate } from '../../Auth/Context';
 import CustomLink from '../CustomLink';
@@ -31,7 +31,6 @@ export default function Menu({ window, mobileOpen, toggle }) {
   const { token, infoUser } = useContext(ContextCreate);
   const theme = useTheme();
   const classes = useStyles();
-  const history = useHistory();
   const container = window !== undefined ? () => window().document.body : undefined;
   const drawer = (
     <div>
@@ -42,9 +41,15 @@ export default function Menu({ window, mobileOpen, toggle }) {
         aria-labelledby="nested-list-subheader"
         className={classes.rootList}
       >
-        <ListItem button className={classes.listTitle}>
-          <ListItemText primary="Sumarios" />
-        </ListItem>
+
+        {infoUser?.mg_role === "admin" ? (
+          <ListItem button className={classes.listTitle}>
+            <ListItemText primary="Administración" />
+          </ListItem>) : (
+            <ListItem button className={classes.listTitle}>
+              <ListItemText primary="Sumarios" />
+          </ListItem>)
+        }
         <List component="div" disablePadding className={classes.listTitle}>
 
           <CustomLink condition="editor" to="/" style={{ textDecoration: "none" }}>
@@ -91,6 +96,15 @@ export default function Menu({ window, mobileOpen, toggle }) {
               <ListItemText secondary="Revistas" />
             </ListItem>
           </CustomLink>
+
+          <CustomLink condition="admin" to="/request" style={{ textDecoration: "none" }}>
+            <ListItem button className={classes.nested}>
+              <ListItemIcon>
+                <NotificationsIcon />
+              </ListItemIcon>
+              <ListItemText secondary="Solicitudes" />
+            </ListItem>
+          </CustomLink>
         </List>
 
         {infoUser?.mg_role === 'editor' &&
@@ -112,14 +126,16 @@ export default function Menu({ window, mobileOpen, toggle }) {
         <ListItem button className={classes.listTitle}>
           <ListItemText primary="Perfil" />
         </ListItem>
-        <List component="div" disablePadding className={classes.listTitle}>
+
+        <CustomLink to="/personal" style={{ textDecoration: "none" }}>
           <ListItem button className={classes.nested}>
             <ListItemIcon>
               <FaceIcon />
             </ListItemIcon>
             <ListItemText secondary="Información de perfil" />
           </ListItem>
-        </List>
+        </CustomLink>
+
       </List>
     </div>
   );

@@ -12,6 +12,8 @@ import Articles from "./pages/Summaries/Articles"
 import SendingHistory from "./pages/SendingHistory"
 import Magazines from "./pages/Magazines"
 import Volumes from "./pages/Magazines/Volumes"
+import Solicitude from "./pages/ManagePublisher/Publisher/index"
+import PersonalInformation from "./pages/ManagePublisher/Publisher/personalInfo"
 import CustomRoute from "./components/CustomRoute"
 import SummariesMagazine from "./pages/Magazines/Summaries"
 import Statistics from "./pages/Statistics"
@@ -34,6 +36,8 @@ const Routes = () => {
 								<CustomRoute condition="admin" path="/magazines" exact component={Magazines} />
 								<CustomRoute condition="admin" path="/magazines/volumes" exact component={Volumes} />
 								<CustomRoute condition="admin" path="/magazines/summaries" exact component={SummariesMagazine} />
+                <CustomRoute condition="admin" path="/request" exact component={Solicitude}/>
+                <CustomRoute path="/personal" exact component={PersonalInformation}/>
 							</AuthRouter>
 						</Switch>
 					</Home>
