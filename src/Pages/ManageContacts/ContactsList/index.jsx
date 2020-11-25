@@ -75,12 +75,12 @@ const ContactList = ({ enqueueSnackbar }) => {
     const enqueueSnackbarRef = useRef(enqueueSnackbar);
 
     const [idContactList, setIdContactList] = useState({
-        id:""
+        id: ""
     })
     const dataContactsOfList = []
     const [flagCreateList, setFlagCreateList] = useState(false); //Change information of Modal between create and update contact list
     const [dataContacts, setDataContact] = useState([]);
-    const [resultCreateContactList, setResultCreateContactList] = useState()
+    const [refresh, setRefresh] = useState(false)
     const [modal, setModal] = useState(false);
     const [addModal, setAddModal] = useState(false)
     const [updateModal, setUpdateModal] = useState(false)
@@ -133,7 +133,7 @@ const ContactList = ({ enqueueSnackbar }) => {
         setAddModal(false)
         setDeleteModal(false)
         setUpdateModal(false)
-        setResultCreateContactList('Acciones realizadas')
+        setRefresh(!refresh)
     }
     const closeModal = () => {
         clean()
@@ -164,11 +164,10 @@ const ContactList = ({ enqueueSnackbar }) => {
         }
         createContactList(infoSend)
             .then(res => {
-                console.log(res)
+                setRefresh(!refresh)
                 enqueueSnackbarRef.current(res.data.msg, {
                     variant: "success",
                 });
-                setResultCreateContactList(res)
             })
             .catch((error) => {
                 if (!axios.isCancel(error)) {
@@ -182,22 +181,21 @@ const ContactList = ({ enqueueSnackbar }) => {
 
     const updateCL = () => {
         updateContactList(dataContactList, idContactList)
-        .then(res=>{
-            if(!res.data.error){
-                setResultCreateContactList(res)
-                enqueueSnackbarRef.current(res.data.msg, {
-                    variant: "success",
-                });
-            }
-            
-        })
-        .catch((res) =>{
-            if (res.data.error) {
-                enqueueSnackbarRef.current(res.data.msg, {
-                    variant: "error",
-                });
-            }
-        })
+            .then(res => {
+                if (!res.data.error) {
+                    setRefresh(!refresh)
+                    enqueueSnackbarRef.current(res.data.msg, {
+                        variant: "success",
+                    });
+                }
+            })
+            .catch((res) => {
+                if (res.data.error) {
+                    enqueueSnackbarRef.current(res.data.msg, {
+                        variant: "error",
+                    });
+                }
+            })
         setModal(false)
         clean()
     }
@@ -208,7 +206,7 @@ const ContactList = ({ enqueueSnackbar }) => {
                 enqueueSnackbarRef.current(res.data.msg, {
                     variant: "success",
                 });
-                setResultCreateContactList(res)
+                setRefresh(!refresh)
             })
             .catch((error) => {
                 if (!axios.isCancel(error)) {
@@ -248,10 +246,10 @@ const ContactList = ({ enqueueSnackbar }) => {
     useEffect(() => {
         getContactsListInfo()
         getContactsInfo()
-    }, [resultCreateContactList])
+    }, [refresh])
     return (
         <>
-            <UpdateContact dataContact={dataContacts} open={updateModal} close={closeContactModal}/>
+            <UpdateContact dataContact={dataContacts} open={updateModal} close={closeContactModal} />
             <AddContact dataContactList={data} open={addModal} close={closeContactModal} />
             <DeleteContact dataContactList={dataContacts} open={deleteModal} close={closeContactModal} />
             <Modal open={modal} textOk="Guardar" close={closeModal} title={flagCreateList ? ("Crear lista") : ("Actualizar lista")} clickOk={() => { flagCreateList ? createCL() : updateCL() }} >
