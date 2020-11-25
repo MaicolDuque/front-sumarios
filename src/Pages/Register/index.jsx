@@ -1,7 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { TextField, Grid, Paper, Typography, Button } from '@material-ui/core';
 import { makeStyles } from "@material-ui/core/styles";
-import axios from "axios";
+import { withSnackbar } from "notistack";
+
+import { postSolicitude } from "../../services/usersService"
+import { createContactList } from "../../services/contactsService"
 
 const infoCorpStyles = makeStyles({
   paper: {
@@ -28,12 +31,18 @@ const infoCorpStyles = makeStyles({
 
 
 
-export default function Register() {
+const Register = ({ enqueueSnackbar }) => {
+  const enqueueSnackbarRef = useRef(enqueueSnackbar);
   const classes = infoCorpStyles();
   const [data, setData] = useState({
     mg_name: "",
     email: "",
     mg_urlMagazine: "",
+  })
+  const [dataContactList, setDataContactList] = useState({
+    name: "Todos",
+    description: "Lista que contiene todos los contactos",
+    mg_contacts: []
   })
   const handleInputChange = (event) => {
     setData({
@@ -42,19 +51,35 @@ export default function Register() {
     })
   }
   const submitData = () => {
-    axios(
-      {
-        method: "POST",
-        baseURL: `${process.env.REACT_APP_PROTOCOL_BACKEND}://${process.env.REACT_APP_HOST_BACKEND}${process.env.REACT_APP_PORT_BACKEND}`,
-        url: `${process.env.REACT_APP_API_CREATE_USER}`,
-        data,
-      }
-    )
+    postSolicitude(data)
       .then((res) => {
-        console.log(res)
+        const idUser = res.data.result._id
+        const infoSend = {
+          id_user: idUser,
+          mg_contact_lists: dataContactList
+        }
+        if (res.data.caution) {
+          enqueueSnackbarRef.current(res.data.msg, {
+            variant: "warning",
+          });
+        } else {
+          createContactList(infoSend)
+            .then((contactList) => {
+              enqueueSnackbarRef.current(res.data.msg, {
+                variant: "success",
+              });
+            })
+            .catch(result => {
+              enqueueSnackbarRef.current("No se pudo enviar la solicitud.", {
+                variant: "error",
+              });
+            })
+        }
       })
-      .catch((error) => {
-        console.log("error")
+      .catch(result => {
+        enqueueSnackbarRef.current("No se pudo enviar la solicitud.", {
+          variant: "error",
+        });
       });
   }
 
@@ -126,3 +151,5 @@ export default function Register() {
     </Paper>
   )
 }
+
+export default withSnackbar(Register)
