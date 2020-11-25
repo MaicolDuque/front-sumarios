@@ -27,8 +27,7 @@ const Routes = () => {
 						<Switch>
 							<Route path="/register" exact component={Register} />
 							<AuthRouter>
-								<CustomRoute condition="editor" path="/" exact component={Statistics} />
-								<CustomRoute condition="editor" path="/search" exact component={Search} />
+								<CustomRoute condition="editor" path="/" exact component={Search} />
 								<CustomRoute condition="editor" path="/contactList" exact component={ContactsList} />
 								<CustomRoute condition="editor" path="/summaries" exact component={Summaries} />
 								<CustomRoute condition="editor" path="/summaries/articles" exact component={Articles} />

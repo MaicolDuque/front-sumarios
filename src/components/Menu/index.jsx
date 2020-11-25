@@ -48,16 +48,16 @@ export default function Menu({ window, mobileOpen, toggle }) {
           </ListItem>) : (
             <ListItem button className={classes.listTitle}>
               <ListItemText primary="Sumarios" />
-          </ListItem>)
+            </ListItem>)
         }
         <List component="div" disablePadding className={classes.listTitle}>
 
           <CustomLink condition="editor" to="/" style={{ textDecoration: "none" }}>
             <ListItem button className={classes.nested}>
               <ListItemIcon>
-                <HomeIcon />
+                <CreateIcon />
               </ListItemIcon>
-              <ListItemText secondary="Dashboard" />
+              <ListItemText secondary="Crear sumarios" />
             </ListItem>
           </CustomLink>
 
@@ -67,15 +67,6 @@ export default function Menu({ window, mobileOpen, toggle }) {
                 <SubjectIcon />
               </ListItemIcon>
               <ListItemText secondary="Mis sumarios" />
-            </ListItem>
-          </CustomLink>
-
-          <CustomLink condition="editor" to="/search" style={{ textDecoration: "none" }}>
-            <ListItem button className={classes.nested}>
-              <ListItemIcon>
-                <CreateIcon />
-              </ListItemIcon>
-              <ListItemText secondary="Crear sumarios" />
             </ListItem>
           </CustomLink>
 
