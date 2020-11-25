@@ -9,11 +9,12 @@ import {
     TableRow,
     makeStyles,
     Box,
-    InputBase
+    FormHelperText
 } from '@material-ui/core'
 import { withSnackbar } from "notistack";
 import SaveIcon from '@material-ui/icons/Save';
 import EditIcon from '@material-ui/icons/Edit';
+import CancelIcon from '@material-ui/icons/Cancel';
 
 import { getPerfil, updatePerfil } from "../../../services/usersService"
 import { ContextCreate } from '../../../Auth/Context';
@@ -37,36 +38,53 @@ const PersonalInfo = ({ enqueueSnackbar }) => {
     const classes = useStyles();
     const { token, infoUser } = useContext(ContextCreate);
     const [showEditInfo, setShowEditInfo] = useState(false)
+    const [alertError, setAlertError] = useState(false)
     const [data, setData] = useState({})
+    const [dataChange, setDataChange] = useState({
+        mg_name: "",
+        email: "",
+        mg_urlMagazine: ""
+    })
     const [refresh, setRefresh] = useState(false)
     const enqueueSnackbarRef = useRef(enqueueSnackbar);
 
+    const changeInformation = () =>{
+        setShowEditInfo(true)
+        setDataChange(data)
+        setAlertError(false)
+    }
+
     const saveInformation = () => {
-        updatePerfil(infoUser._id, token, data)
-            .then((res) => {
-                if (!res.data.error) {
-                    enqueueSnackbarRef.current(res.data.msg, {
-                        variant: "success",
+        if (dataChange.mg_name && dataChange.email && dataChange.mg_urlMagazine) {
+            updatePerfil(infoUser._id, token, dataChange)
+                .then((res) => {
+                    if (!res.data.error) {
+                        enqueueSnackbarRef.current(res.data.msg, {
+                            variant: "success",
+                        });
+                        setRefresh(!refresh)
+                        setShowEditInfo(false)
+                    }
+                })
+                .catch(res => {
+                    enqueueSnackbarRef.current("No se logró actualizar la información.", {
+                        variant: "error",
                     });
-                    setRefresh(!refresh)
-                }
-            })
-            .catch(res => {
-                enqueueSnackbarRef.current("No se logró actualizar la información.", {
-                    variant: "error",
-                });
-            })
-        console.log(data)
-        setShowEditInfo(false)
+                })
+        }
+        else {
+            setAlertError(true)
+        }
+
     }
     useEffect(() => {
         getPerfil(infoUser._id, token)
             .then((res) => {
                 setData(res.data)
+                setDataChange(res.data)
                 if (data) {
                     setRefresh(true)
                 }
-                console.log(data.mg_name)
             }
             )
             .catch(res => console.log(res))
@@ -79,66 +97,37 @@ const PersonalInfo = ({ enqueueSnackbar }) => {
             <Grid>
                 <center>
                     <Box component={Paper}>
-                        {
-                            refresh ? (<TableRow >
-                                <TableCell >
-                                    {
-                                        showEditInfo ? (
-                                            <>
-                                                <p />
-                                                <TextField
-                                                    variant={"outlined"}
-                                                    label="Nombre de la revista"
-                                                    id={"txt_nameMagazine"}
-                                                    value={data.mg_name}
-                                                    onChange={(event) => { setData({ ...data, mg_name: event.target.value }) }}
-                                                    name={"mg_name"} fullWidth /> <p />
-                                                <TextField
-                                                    variant={"outlined"}
-                                                    label="Correo electrónico"
-                                                    id={"txt_email"}
-                                                    value={data.email}
-                                                    onChange={(event) => { setData({ ...data, email: event.target.value }) }}
-                                                    name={"email"} fullWidth /> <p />
-                                                <TextField
-                                                    variant={"outlined"}
-                                                    label="Url de la revista"
-                                                    id={"txt_urlMagazine"}
-                                                    value={data.mg_urlMagazine}
-                                                    onChange={(event) => { setData({ ...data, mg_urlMagazine: event.target.value }) }}
-                                                    name={"mg_urlMagazine"} fullWidth /> <p />
-                                                <Button
-                                                    color={"primary"}
-                                                    size="medium"
-                                                    variant="contained"
-                                                    startIcon={<SaveIcon />}
-                                                    onClick={() => { saveInformation() }}
-                                                >Guardar información</Button>
-                                            </>) : (
-                                                <>
-                                                    <p />
-                                                    <Typography variant="h4" component="h2" gutterBottom>{data.mg_name}</Typography> <p />
-                                                    <Typography gutterBottom >{data.email}</Typography> <p />
-                                                    <Typography gutterBottom >{data.mg_urlMagazine}</Typography> <p />
-                                                    <Button
-                                                        color={"primary"}
-                                                        size="medium"
-                                                        variant="contained"
-                                                        startIcon={<EditIcon />}
-                                                        onClick={() => { setShowEditInfo(true) }}
-                                                    >Editar perfil</Button>
-                                                </>)
-                                    }
-                                </TableCell>
-                                <TableCell align="right">
-                                    <img src={require("../../../Images/publisher.jpg")} className={classes.large} />
-                                </TableCell>
-                            </TableRow>) : null
-                        }
-
+                        <TableRow >
+                            <TableCell >
+                                {showEditInfo ? (
+                                    <>
+                                        <p />
+                                        <TextField
+                                            variant={"outlined"} label="Nombre de la revista" id={"txt_nameMagazine"} value={dataChange.mg_name} error ={alertError && !dataChange.mg_name}
+                                            onChange={(event) => { setDataChange({ ...dataChange, mg_name: event.target.value }) }} name={"mg_name"} fullWidth required/> <p />
+                                        <TextField variant={"outlined"} label="Correo electrónico" id={"txt_email"} value={dataChange.email} error ={alertError && !dataChange.email}
+                                            onChange={(event) => { setDataChange({ ...dataChange, email: event.target.value }) }} name={"email"} fullWidth required/> <p />
+                                        <TextField variant={"outlined"} label="Url de la revista" id={"txt_urlMagazine"} value={dataChange.mg_urlMagazine} error ={alertError && !dataChange.mg_urlMagazine}
+                                            onChange={(event) => { setDataChange({ ...dataChange, mg_urlMagazine: event.target.value }) }} name={"mg_urlMagazine"} fullWidth required/> <p />
+                                        {alertError && <FormHelperText>Todos los campos son requeridos.</FormHelperText>}<p />
+                                        <Button color={"secondary"} size="medium" variant="contained" startIcon={<CancelIcon />} onClick={() => { setShowEditInfo(false) }}>Cancelar</Button>
+                                        <Button color={"primary"} size="medium" variant="contained" startIcon={<SaveIcon />} onClick={() => { saveInformation() }}>Guardar información</Button>
+                                    </>) : (
+                                        <>
+                                            <p />
+                                            <Typography variant="h4" component="h2" gutterBottom>{data.mg_name}</Typography> <p />
+                                            <Typography gutterBottom >{data.email}</Typography> <p />
+                                            <Typography gutterBottom >{data.mg_urlMagazine}</Typography> <p />
+                                            <Button color={"primary"} size="medium" variant="contained" startIcon={<EditIcon />} onClick={() => {changeInformation()  }}>Editar perfil</Button>
+                                        </>)
+                                }
+                            </TableCell>
+                            <TableCell align="right">
+                                <img src={require("../../../Images/publisher.jpg")} className={classes.large} />
+                            </TableCell>
+                        </TableRow>
                     </Box>
                 </center>
-
             </Grid>
         </>
     )

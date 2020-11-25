@@ -13,7 +13,8 @@ import {
     TableRow,
     TextField,
     DialogContentText,
-    Tooltip
+    Tooltip,
+    FormHelperText
 } from '@material-ui/core';
 import { makeStyles } from "@material-ui/core/styles";
 import AddCircleIcon from '@material-ui/icons/AddCircle';
@@ -67,17 +68,6 @@ const ContactList = ({ enqueueSnackbar }) => {
     const classes = infoStyles();
     const { infoUser } = useContext(ContextCreate);
     const [data, setData] = useState([])
-    const [dataContactList, setDataContactList] = useState({
-        name: "",
-        description: "",
-        mg_contacts: [""]
-    })
-    const enqueueSnackbarRef = useRef(enqueueSnackbar);
-
-    const [idContactList, setIdContactList] = useState({
-        id: ""
-    })
-    const dataContactsOfList = []
     const [flagCreateList, setFlagCreateList] = useState(false); //Change information of Modal between create and update contact list
     const [dataContacts, setDataContact] = useState([]);
     const [refresh, setRefresh] = useState(false)
@@ -86,6 +76,20 @@ const ContactList = ({ enqueueSnackbar }) => {
     const [updateModal, setUpdateModal] = useState(false)
     const [deleteModal, setDeleteModal] = useState(false)
     const [open, setOpen] = useState(false);
+    const [alertError, setAlertError] = useState(false)
+
+    const enqueueSnackbarRef = useRef(enqueueSnackbar);
+
+    const [dataContactList, setDataContactList] = useState({
+        name: "",
+        description: "",
+        mg_contacts: []
+    })
+
+    const [idContactList, setIdContactList] = useState({
+        id: ""
+    })
+    const dataContactsOfList = []
 
     const clean = () => {
         setDataContactList({
@@ -102,7 +106,9 @@ const ContactList = ({ enqueueSnackbar }) => {
     const handleOpen = () => {
         setOpen(true);
     };
-
+    const refreshPage = ()=>{
+        setRefresh(!refresh)
+    }
     let getContactsInfo = () => {
         getContacts(infoUser.mg_contact_lists)
             .then((res) => {
@@ -136,6 +142,7 @@ const ContactList = ({ enqueueSnackbar }) => {
         setRefresh(!refresh)
     }
     const closeModal = () => {
+        setDataContactList({...dataContactList, mg_contacts:[]})
         clean()
         setModal(false)
     }
@@ -153,51 +160,60 @@ const ContactList = ({ enqueueSnackbar }) => {
         setDeleteModal(true)
     }
     const createCL = () => {
-        const mgContacts = []
-        dataContactList.mg_contacts.map((item) => {
-            mgContacts.push(item._id)
-        })
-        setDataContactList({ ...dataContactList, mg_contacts: mgContacts })
-        const infoSend = {
-            id_user: infoUser._id,
-            mg_contact_lists: dataContactList
-        }
-        createContactList(infoSend)
-            .then(res => {
-                setRefresh(!refresh)
-                enqueueSnackbarRef.current(res.data.msg, {
-                    variant: "success",
-                });
+        if (dataContactList.name) {
+            const mgContacts = []
+            dataContactList.mg_contacts.map((item) => {
+                mgContacts.push(item._id)
             })
-            .catch((error) => {
-                if (!axios.isCancel(error)) {
-                    console.error(error);
-                }
-            })
-        setFlagCreateList(false)
-        setModal(false)
-        clean()
-    }
-
-    const updateCL = () => {
-        updateContactList(dataContactList, idContactList)
-            .then(res => {
-                if (!res.data.error) {
+            setDataContactList({ ...dataContactList, mg_contacts: mgContacts })
+            const infoSend = {
+                id_user: infoUser._id,
+                mg_contact_lists: dataContactList
+            }
+            createContactList(infoSend)
+                .then(res => {
                     setRefresh(!refresh)
                     enqueueSnackbarRef.current(res.data.msg, {
                         variant: "success",
                     });
-                }
-            })
-            .catch((res) => {
-                if (res.data.error) {
-                    enqueueSnackbarRef.current(res.data.msg, {
-                        variant: "error",
-                    });
-                }
-            })
-        setModal(false)
-        clean()
+                })
+                .catch((error) => {
+                    if (!axios.isCancel(error)) {
+                        console.error(error);
+                    }
+                })
+            setFlagCreateList(false)
+            setModal(false)
+            clean()
+        } else {
+            setAlertError(true)
+        }
+    }
+
+    const updateCL = () => {
+        if (dataContactList.name) {
+            updateContactList(dataContactList, idContactList)
+                .then(res => {
+                    if (!res.data.error) {
+                        setRefresh(!refresh)
+                        enqueueSnackbarRef.current(res.data.msg, {
+                            variant: "success",
+                        });
+                    }
+                })
+                .catch((res) => {
+                    if (res.data.error) {
+                        enqueueSnackbarRef.current(res.data.msg, {
+                            variant: "error",
+                        });
+                    }
+                })
+            setAlertError(false)
+            setModal(false)
+            clean()
+        } else {
+            setAlertError(true)
+        }
     }
 
     const deleteCL = (idContactList) => {
@@ -249,39 +265,24 @@ const ContactList = ({ enqueueSnackbar }) => {
     }, [refresh])
     return (
         <>
-            <UpdateContact dataContact={dataContacts} open={updateModal} close={closeContactModal} />
-            <AddContact dataContactList={data} open={addModal} close={closeContactModal} />
-            <DeleteContact dataContactList={dataContacts} open={deleteModal} close={closeContactModal} />
+            <UpdateContact dataContact={dataContacts} open={updateModal} close={closeContactModal} refresh={refreshPage}/>
+            <AddContact dataContactList={data} open={addModal} close={closeContactModal} refresh={refreshPage}/>
+            <DeleteContact dataContactList={dataContacts} open={deleteModal} close={closeContactModal} refresh={refreshPage}/>
             <Modal open={modal} textOk="Guardar" close={closeModal} title={flagCreateList ? ("Crear lista") : ("Actualizar lista")} clickOk={() => { flagCreateList ? createCL() : updateCL() }} >
                 <DialogContentText>
                     {flagCreateList ? ("Integrese el nombre, la descripción y los contactos que pertenecerán a la lista.") :
                         ("Puede cambiar el nombre, la descripción y los contactos que pertenecerán a la lista.")}
                 </DialogContentText>
-                <TextField margin="normal"
-                    name="txt_nameList" value={dataContactList.name}
-                    onChange={(event) => {
-                        setDataContactList({ ...dataContactList, name: event.target.value })
-                    }}
+                <TextField margin="normal" name="txt_nameList" value={dataContactList.name} error={alertError && !dataContactList.name}
+                    onChange={(event) => { setDataContactList({ ...dataContactList, name: event.target.value }) }}
                     autoFocus type="text" id="nameList" label="Nombre de la lista" variant="outlined" fullWidth /> <br />
-                <TextField margin="normal"
-                    name="txt_description"
-                    value={dataContactList.description}
-                    type="text" id="description"
-                    onChange={(event) => {
-                        setDataContactList({ ...dataContactList, description: event.target.value })
-                    }}
+                <TextField margin="normal" name="txt_description" value={dataContactList.description} type="text" id="description"
+                    onChange={(event) => { setDataContactList({ ...dataContactList, description: event.target.value }) }}
                     label="Descripción" variant="outlined" fullWidth /> <p />
-                <Autocomplete
-                    multiple
-                    id="listContact"
-                    options={dataContacts}
-                    onChange={(event, newValue) => {
-                        setDataContactList({ ...dataContactList, mg_contacts: ((newValue === null) ? "" : newValue) })
-                    }}
-                    getOptionLabel={(option) => option.c_name}
-                    getOptionSelected={(option, value) => option.c_name === value.c_name}
-                    filterSelectedOptions
-                    value={dataContactList.mg_contacts}
+                <Autocomplete multiple id="listContact" options={dataContacts}
+                    onChange={(event, newValue) => { setDataContactList({ ...dataContactList, mg_contacts: ((newValue === null) ? "" : newValue) }) }}
+                    getOptionLabel={(option) => option.c_name} getOptionSelected={(option, value) => option.c_name === value.c_name}
+                    filterSelectedOptions value={dataContactList.mg_contacts}
                     renderInput={(params) => (
                         <TextField
                             {...params}
@@ -290,6 +291,7 @@ const ContactList = ({ enqueueSnackbar }) => {
                         />
                     )}
                 />
+                {alertError && <FormHelperText>Debes asignarle un nombre a la lista.</FormHelperText>}<p />
             </Modal>
             <Grid>
                 <Typography variant="h3" component="h2" gutterBottom align="center" style={{ color: "#196844" }}>Lista de Contactos</Typography>
@@ -299,39 +301,13 @@ const ContactList = ({ enqueueSnackbar }) => {
                 <Grid container direction="column">
                     <Grid container>
                         <Tooltip title="Contactos" placement="left">
-                            <SpeedDial
-                                ariaLabel="Contacto"
-                                icon={<PermContactCalendarIcon />}
-                                onClose={handleClose}
-                                onClick={handleOpen}
-                                open={open}
-                                direction='right'
-                            >
-                                <SpeedDialAction
-                                    key='AddContact'
-                                    icon={<AddCircleIcon />}
-                                    tooltipTitle='Agregar contacto'
-                                    placement="top"
-                                    onClick={btnAddContact}
-                                />
-                                <SpeedDialAction
-                                    key='UpdateContact'
-                                    icon={<SystemUpdateAltIcon />}
-                                    tooltipTitle='Actualizar contacto'
-                                    placement="top"
-                                    onClick={btnUpdateContact}
-                                />
-                                <SpeedDialAction
-                                    key='DeleteContact'
-                                    icon={<DeleteForeverIcon />}
-                                    tooltipTitle='Eliminar contacto'
-                                    placement="top"
-                                    onClick={btnDeleteContact}
-                                />
+                            <SpeedDial ariaLabel="Contacto" icon={<PermContactCalendarIcon />} onClose={handleClose} onClick={handleOpen} open={open} direction='right'>
+                                <SpeedDialAction key='AddContact' icon={<AddCircleIcon />} tooltipTitle='Agregar contacto' placement="top" onClick={()=>{btnAddContact()}}/>
+                                <SpeedDialAction key='UpdateContact' icon={<SystemUpdateAltIcon />} tooltipTitle='Actualizar contacto' placement="top" onClick={()=>{btnUpdateContact()}}/>
+                                <SpeedDialAction key='DeleteContact' icon={<DeleteForeverIcon />} tooltipTitle='Eliminar contacto' placement="top" onClick={()=>{btnDeleteContact()}}/>
                             </SpeedDial>
                         </Tooltip>
                     </Grid>
-
                     <br />
                     <Grid>
                         <TableContainer component={Paper}>
@@ -347,15 +323,9 @@ const ContactList = ({ enqueueSnackbar }) => {
                                         <TableCell />
                                     </TableRow>
                                     <TableRow>
-                                        <TableCell>
-                                            <Typography>Nombre de la lista</Typography>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Typography>Descripción</Typography>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Typography>Fecha de creación</Typography>
-                                        </TableCell>
+                                        <TableCell><Typography>Nombre de la lista</Typography></TableCell>
+                                        <TableCell><Typography>Descripción</Typography></TableCell>
+                                        <TableCell><Typography>Fecha de creación</Typography></TableCell>
                                         <TableCell />
                                         <TableCell />
                                     </TableRow>
@@ -370,8 +340,7 @@ const ContactList = ({ enqueueSnackbar }) => {
                                                 <TableCell><Button startIcon={<VisibilityIcon />} onClick={() => onClickGetContactList(item)} /></TableCell>
                                                 <TableCell><Button startIcon={<DeleteForeverIcon style={{ color: '#A93226' }} />} onClick={() => deleteCL(item._id)} /></TableCell>
                                             </TableRow>))
-                                    )
-                                    }
+                                    )}
                                 </TableBody>
                             </Table>
                         </TableContainer>
