@@ -14,6 +14,7 @@ import Magazines from "./pages/Magazines"
 import Volumes from "./pages/Magazines/Volumes"
 import CustomRoute from "./components/CustomRoute"
 import SummariesMagazine from "./pages/Magazines/Summaries"
+import Statistics from "./pages/Statistics"
 
 const Routes = () => {
 	return (
@@ -24,6 +25,7 @@ const Routes = () => {
 						<Switch>
 							<Route path="/register" exact component={Register} />
 							<AuthRouter>
+								<CustomRoute condition="editor" path="/" exact component={Statistics} />
 								<CustomRoute condition="editor" path="/search" exact component={Search} />
 								<CustomRoute condition="editor" path="/contactList" exact component={ContactsList} />
 								<CustomRoute condition="editor" path="/summaries" exact component={Summaries} />

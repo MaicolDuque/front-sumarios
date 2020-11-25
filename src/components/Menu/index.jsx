@@ -8,6 +8,7 @@ import DraftsIcon from '@material-ui/icons/Drafts';
 import SubjectIcon from '@material-ui/icons/Subject';
 import FaceIcon from '@material-ui/icons/Face';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
+import HomeIcon from '@material-ui/icons/Home';
 import { useHistory } from "react-router-dom";
 
 import { ContextCreate } from '../../Auth/Context';
@@ -45,6 +46,16 @@ export default function Menu({ window, mobileOpen, toggle }) {
           <ListItemText primary="Sumarios" />
         </ListItem>
         <List component="div" disablePadding className={classes.listTitle}>
+
+          <CustomLink condition="editor" to="/" style={{ textDecoration: "none" }}>
+            <ListItem button className={classes.nested}>
+              <ListItemIcon>
+                <HomeIcon />
+              </ListItemIcon>
+              <ListItemText secondary="Dashboard" />
+            </ListItem>
+          </CustomLink>
+
           <CustomLink condition="editor" to="/summaries" style={{ textDecoration: "none" }}>
             <ListItem button className={classes.nested}>
               <ListItemIcon>
@@ -84,9 +95,9 @@ export default function Menu({ window, mobileOpen, toggle }) {
 
         {infoUser?.mg_role === 'editor' &&
           <> <Divider />
-          <ListItem button className={classes.listTitle}>
-            <ListItemText primary="Contactos" />
-          </ListItem> </>}
+            <ListItem button className={classes.listTitle}>
+              <ListItemText primary="Contactos" />
+            </ListItem> </>}
 
         <CustomLink condition="editor" to="/contactList" style={{ textDecoration: "none" }}>
           <ListItem button className={classes.nested}>
