@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useHistory } from "react-router-dom";
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -14,12 +14,14 @@ import EditIcon from '@material-ui/icons/Edit';
 import { DialogContentText, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, TextField, Typography } from '@material-ui/core';
 import axios from "axios";
 import { format } from 'date-fns'
+import { useSnackbar } from 'notistack';
 
-import { getAllSummaries, sendEmailSummary, updatesInfoSummaryById } from '../../services/summaryService'
+import { sendEmailSummary, updatesInfoSummaryById } from '../../services/summaryService'
 import { ContextCreate } from '../../Auth/Context';
 import Spinner from '../../components/Spinner';
 import Modal from '../../components/Modal';
 import useContactLists from '../../hooks/useContactLists';
+import useSummaries from '../../hooks/useSummaries';
 
 const useStyles = makeStyles((theme) => ({
   table: {
@@ -33,29 +35,19 @@ const useStyles = makeStyles((theme) => ({
 export default function Summaries() {
   const classes = useStyles();
   const history = useHistory();
+  const { enqueueSnackbar } = useSnackbar();
   const [cargando, setCargando] = useState(false);
   const [modal, setModal] = useState(false);
   const [modalEdit, setModalEdit] = useState(false);
-  const [resfresh, setRefresh] = useState(false)
   const [infoEnvio, setInfoEnvio] = useState({ userId: '', listaId: '', summaryId: '', name: '', description: '', error: false });
   const { infoUser, token } = useContext(ContextCreate);
-  const [summaries, setSummaries] = useState([])
   const [infoSumario, setInfoSumario] = useState({ name: '', description: '', favorite: false, errorNombre: false, id: '' })
   const { contactLists } = useContactLists()
+  const { resfresh, setRefresh, summaries, cargandoSummaries } = useSummaries(infoUser._id)
 
   const seeArticles = (idVolumen) => {
     localStorage.setItem('id_summary', idVolumen)
     history.push('/summaries/articles')
-  }
-
-  const getSummaries = () => {
-    setCargando(true)
-    getAllSummaries(infoUser._id, token)
-      .then(info => {
-        setSummaries(info.data)
-        setCargando(false)
-      })
-      .catch(error => console.log(error))
   }
 
   const handleChangeList = (event) => {
@@ -70,7 +62,7 @@ export default function Summaries() {
     } else {
       const { error, ...data } = infoEnvio
       sendEmailSummary(data, token)
-        .then((res) => setModal(false))
+        .then((res) => { setModal(false); enqueueSnackbar("Sumario enviado exitosamente!", { variant: 'success' }) })
         .catch((error) => {
           if (!axios.isCancel(error)) {
             console.log("ererererer")
@@ -113,13 +105,9 @@ export default function Summaries() {
     }
   }
 
-  useEffect(() => {
-    getSummaries()
-  }, [resfresh])
-
   return (
     <>
-      { cargando && <Spinner />}
+      { cargando || cargandoSummaries ? <Spinner /> : null}
       <Grid>
         <Typography variant="h3" component="h2" gutterBottom align="center" style={{ color: "#196844" }}>Mis sumarios</Typography>
       </Grid>

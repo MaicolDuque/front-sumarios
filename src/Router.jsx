@@ -14,36 +14,37 @@ import Magazines from "./pages/Magazines"
 import Volumes from "./pages/Magazines/Volumes"
 import Solicitude from "./pages/ManagePublisher/Publisher/index"
 import PersonalInformation from "./pages/ManagePublisher/Publisher/personalInfo"
+import CustomRoute from "./components/CustomRoute"
+import SummariesMagazine from "./pages/Magazines/Summaries"
+import Statistics from "./pages/Statistics"
 
 const Routes = () => {
-    return (
-        <AuthState>
-            <Router>
-                <Switch>
-                    <Home path="/">
-                        <Switch>
-                            <Route
-                                path="/register"
-                                exact
-                                component={Register}
-                            />
-                            <AuthRouter>
-                                <Route path="/search" exact component={Search} />
-                                <Route path="/contactList" exact component={ContactsList} />
-                                <Route path="/summaries" exact component={Summaries} />
-                                <Route path="/summaries/articles" exact component={Articles} />
-                                <Route path="/history" exact component={SendingHistory} />
-                                <Route path="/magazines" exact component={Magazines} />
-                                <Route path="/magazines/volumes" exact component={Volumes} />
-                                <Route path="/request" exact component={Solicitude}/>
-                                <Route path="/personal" exact component={PersonalInformation}/>
-                            </AuthRouter>
-                        </Switch>
-                    </Home>
-                </Switch>
-            </Router>
-        </AuthState>
-    )
+	return (
+		<AuthState>
+			<Router>
+				<Switch>
+					<Home path="/">
+						<Switch>
+							<Route path="/register" exact component={Register} />
+							<AuthRouter>
+								<CustomRoute condition="editor" path="/" exact component={Statistics} />
+								<CustomRoute condition="editor" path="/search" exact component={Search} />
+								<CustomRoute condition="editor" path="/contactList" exact component={ContactsList} />
+								<CustomRoute condition="editor" path="/summaries" exact component={Summaries} />
+								<CustomRoute condition="editor" path="/summaries/articles" exact component={Articles} />
+								<CustomRoute condition="editor" path="/history" exact component={SendingHistory} />
+								<CustomRoute condition="admin" path="/magazines" exact component={Magazines} />
+								<CustomRoute condition="admin" path="/magazines/volumes" exact component={Volumes} />
+								<CustomRoute condition="admin" path="/magazines/summaries" exact component={SummariesMagazine} />
+                <CustomRoute condition="admin" path="/request" exact component={Solicitude}/>
+                <CustomRoute path="/personal" exact component={PersonalInformation}/>
+							</AuthRouter>
+						</Switch>
+					</Home>
+				</Switch>
+			</Router>
+		</AuthState>
+	)
 }
 
 export default Routes

@@ -95,6 +95,11 @@ const Magazines = ({ enqueueSnackbar }) => {
   }
 
 
+  const seeSummaries = (id, name, url) => {
+    localStorage.setItem('info_magazine', JSON.stringify({ id, name, url }))
+    history.push('/magazines/summaries')
+  }
+
   return (
     <>
       { cargando && <Spinner />}
@@ -141,6 +146,7 @@ const Magazines = ({ enqueueSnackbar }) => {
               <TableCell align="center">Fecha</TableCell>
               <TableCell align="center">Cantidad volúmenes</TableCell>
               <TableCell align="center">Ver volúmenes</TableCell>
+              <TableCell align="center">Ver sumarios</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -155,6 +161,9 @@ const Magazines = ({ enqueueSnackbar }) => {
                 <TableCell align="center">{row.mg_list_volumes.length}</TableCell>
                 <TableCell align="center">
                   <Button startIcon={<VisibilityIcon />} onClick={() => verVolumes(row._id, row.mg_name, row.mg_urlMagazine)} />
+                </TableCell>
+                <TableCell align="center"> 
+                  <Button startIcon={<VisibilityIcon />} onClick={() => seeSummaries(row._id, row.mg_name, row.mg_urlMagazine)} /> 
                 </TableCell>
               </TableRow>
             ))}

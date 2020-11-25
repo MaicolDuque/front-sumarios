@@ -11,6 +11,7 @@ import UpdateIcon from '@material-ui/icons/Update';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import { Button, Checkbox, DialogContentText, TextField, Typography } from '@material-ui/core';
 import axios from "axios";
+import { useSnackbar } from 'notistack';
 
 import { ContextCreate } from '../../../Auth/Context';
 import { createSummary, getAllArticlesBySummary, updatesArticlesBySummary } from '../../../services/summaryService';
@@ -28,6 +29,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Articles() {
   const classes = useStyles();
+  const { enqueueSnackbar } = useSnackbar();
   const [cargando, setCargando] = useState(false);
   const { infoUser, token } = useContext(ContextCreate);
   const [articles, setArticles] = useState([])
@@ -70,7 +72,7 @@ export default function Articles() {
       setModal(false)
       setCargando(true)
       createSummary(infoSumario, token)
-        .then(res => setCargando(false) )
+        .then(res => { setCargando(false); enqueueSnackbar("Sumario creado exitosamente", { variant: 'success' }) })
         .catch((error) => {
             if (!axios.isCancel(error)) {
               console.error(error);

@@ -2,15 +2,17 @@ import { Divider, Drawer, Hidden, List, ListItem, ListItemIcon, ListItemText } f
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import SubjectIcon from '@material-ui/icons/Subject';
 import CreateIcon from '@material-ui/icons/Create';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import DraftsIcon from '@material-ui/icons/Drafts';
-import NotificationsIcon from '@material-ui/icons/Notifications';
+import SubjectIcon from '@material-ui/icons/Subject';
 import FaceIcon from '@material-ui/icons/Face';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
-import { useHistory, Link } from "react-router-dom";
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import HomeIcon from '@material-ui/icons/Home';
+
 import { ContextCreate } from '../../Auth/Context';
+import CustomLink from '../CustomLink';
 
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
@@ -29,7 +31,6 @@ export default function Menu({ window, mobileOpen, toggle }) {
   const { token, infoUser } = useContext(ContextCreate);
   const theme = useTheme();
   const classes = useStyles();
-  const history = useHistory();
   const container = window !== undefined ? () => window().document.body : undefined;
   const drawer = (
     <div>
@@ -40,97 +41,101 @@ export default function Menu({ window, mobileOpen, toggle }) {
         aria-labelledby="nested-list-subheader"
         className={classes.rootList}
       >
-        {infoUser?.mg_role === "admin" ? (
-          <>
-            <ListItem button className={classes.listTitle}>
-              <ListItemText primary="Administración" />
-            </ListItem>
-            <List component="div" disablePadding className={classes.listTitle}>
-              <Link to="/magazines" style={{ textDecoration: "none" }}>
-                <ListItem button className={classes.nested}>
-                  <ListItemIcon>
-                    <LibraryBooksIcon />
-                  </ListItemIcon>
-                  <ListItemText secondary="Revistas" />
-                </ListItem>
-              </Link>
-              <Link to="/request" style={{ textDecoration: "none" }}>
-                <ListItem button className={classes.nested}>
-                  <ListItemIcon>
-                    <NotificationsIcon />
-                  </ListItemIcon>
-                  <ListItemText secondary="Solicitudes" />
-                </ListItem>
-              </Link>
-            </List>
-            <Divider />
-          </>
-        ) : (
-            <>
-              <ListItem button className={classes.listTitle}>
-                <ListItemText primary="Sumarios" />
-              </ListItem>
-              <List component="div" disablePadding className={classes.listTitle}>
-                <Link to="/summaries" style={{ textDecoration: "none" }}>
-                  <ListItem button className={classes.nested}  >
-                    <ListItemIcon>
-                      <SubjectIcon />
-                    </ListItemIcon>
-                    <ListItemText secondary="Mis sumarios" />
-                  </ListItem>
-                </Link>
-                <ListItem
-                  button
-                  className={classes.nested}
-                  onClick={() => {
-                    history.push("/search");
-                  }}>
-                  <ListItemIcon>
-                    <CreateIcon />
-                  </ListItemIcon>
-                  <ListItemText secondary="Crear sumarios" />
-                </ListItem>
-                <Link to="/history" style={{ textDecoration: "none" }}>
-                  <ListItem button className={classes.nested}>
-                    <ListItemIcon>
-                      <DraftsIcon />
-                    </ListItemIcon>
-                    <ListItemText secondary="Historial de envíos" />
-                  </ListItem>
-                </Link>
-              </List>
-              <Divider />
-              <ListItem button className={classes.listTitle}>
-                <ListItemText primary="Contactos" />
-              </ListItem>
-              <List component="div" disablePadding className={classes.listTitle}>
-                <ListItem button className={classes.nested}
-                  onClick={() => {
-                    history.push("/contactList");
-                  }}>
-                  <ListItemIcon>
-                    <ListAltIcon />
-                  </ListItemIcon>
-                  <ListItemText secondary="Listas de contactos" />
-                </ListItem>
-              </List>
-              <Divider />
-            </>
-          )}
 
+        {infoUser?.mg_role === "admin" ? (
+          <ListItem button className={classes.listTitle}>
+            <ListItemText primary="Administración" />
+          </ListItem>) : (
+            <ListItem button className={classes.listTitle}>
+              <ListItemText primary="Sumarios" />
+          </ListItem>)
+        }
+        <List component="div" disablePadding className={classes.listTitle}>
+
+          <CustomLink condition="editor" to="/" style={{ textDecoration: "none" }}>
+            <ListItem button className={classes.nested}>
+              <ListItemIcon>
+                <HomeIcon />
+              </ListItemIcon>
+              <ListItemText secondary="Dashboard" />
+            </ListItem>
+          </CustomLink>
+
+          <CustomLink condition="editor" to="/summaries" style={{ textDecoration: "none" }}>
+            <ListItem button className={classes.nested}>
+              <ListItemIcon>
+                <SubjectIcon />
+              </ListItemIcon>
+              <ListItemText secondary="Mis sumarios" />
+            </ListItem>
+          </CustomLink>
+
+          <CustomLink condition="editor" to="/search" style={{ textDecoration: "none" }}>
+            <ListItem button className={classes.nested}>
+              <ListItemIcon>
+                <CreateIcon />
+              </ListItemIcon>
+              <ListItemText secondary="Crear sumarios" />
+            </ListItem>
+          </CustomLink>
+
+          <CustomLink condition="editor" to="/history" style={{ textDecoration: "none" }}>
+            <ListItem button className={classes.nested}>
+              <ListItemIcon>
+                <DraftsIcon />
+              </ListItemIcon>
+              <ListItemText secondary="Historial de envíos" />
+            </ListItem>
+          </CustomLink>
+
+          <CustomLink condition="admin" to="/magazines" style={{ textDecoration: "none" }}>
+            <ListItem button className={classes.nested}>
+              <ListItemIcon>
+                <LibraryBooksIcon />
+              </ListItemIcon>
+              <ListItemText secondary="Revistas" />
+            </ListItem>
+          </CustomLink>
+
+          <CustomLink condition="admin" to="/request" style={{ textDecoration: "none" }}>
+            <ListItem button className={classes.nested}>
+              <ListItemIcon>
+                <NotificationsIcon />
+              </ListItemIcon>
+              <ListItemText secondary="Solicitudes" />
+            </ListItem>
+          </CustomLink>
+        </List>
+
+        {infoUser?.mg_role === 'editor' &&
+          <> <Divider />
+            <ListItem button className={classes.listTitle}>
+              <ListItemText primary="Contactos" />
+            </ListItem> </>}
+
+        <CustomLink condition="editor" to="/contactList" style={{ textDecoration: "none" }}>
+          <ListItem button className={classes.nested}>
+            <ListItemIcon>
+              <ListAltIcon />
+            </ListItemIcon>
+            <ListItemText secondary="Listas de contactos" />
+          </ListItem>
+        </CustomLink>
+
+        <Divider />
         <ListItem button className={classes.listTitle}>
           <ListItemText primary="Perfil" />
         </ListItem>
-        <Link to="/personal" style={{ textDecoration: "none" }}>
-          <List component="div" disablePadding className={classes.listTitle}>
-            <ListItem button className={classes.nested}>
-              <ListItemIcon>
-                <FaceIcon />
-              </ListItemIcon>
-              <ListItemText secondary="Información de perfil" />
-            </ListItem>
-          </List>
-        </Link>
+
+        <CustomLink to="/personal" style={{ textDecoration: "none" }}>
+          <ListItem button className={classes.nested}>
+            <ListItemIcon>
+              <FaceIcon />
+            </ListItemIcon>
+            <ListItemText secondary="Información de perfil" />
+          </ListItem>
+        </CustomLink>
+
       </List>
     </div>
   );
