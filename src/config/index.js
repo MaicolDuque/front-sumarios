@@ -1,7 +1,7 @@
 
 const All = {
   google: {
-    clientID: `${process.env.CLIENTE_GOOGLE}`,
+    clientID: process.env.REACT_APP_CLIENTE_GOOGLE,
     clientSecret: `${process.env.CLIENTE_GOOGLE_SECRET}`,
   },
   backend: {

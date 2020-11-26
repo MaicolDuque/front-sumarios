@@ -1,41 +1,20 @@
 import React, { useContext, useState, } from 'react'
 import axios from "axios";
-import {
-  Grid,
-  InputAdornment,
-  Button,
-  FormControl,
-  OutlinedInput,
-  InputLabel,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Checkbox,
-  Paper,
-  Typography,
-  makeStyles,
-  Link,
-  Select,
-  FormHelperText,
-  Tooltip,
-} from '@material-ui/core';
+import { Grid, InputAdornment, Button, FormControl, OutlinedInput, InputLabel, makeStyles, Select, FormHelperText, Tooltip, Tab, AppBar } from '@material-ui/core';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import TextField from '@material-ui/core/TextField';
 import SearchIcon from '@material-ui/icons/Search';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
-import SendIcon from '@material-ui/icons/Send';
 import InfoIcon from '@material-ui/icons/Info';
 
 import { ContextCreate } from "../../../Auth/Context"; //Context
-import { getArticlesByKeyword, createSummary, sendEmailSummary } from '../../../services/summaryService'
+import { getArticlesByKeyword, createSummary, sendEmailSummary, getSummariesByKeywords } from '../../../services/summaryService'
 import Modal from '../../../components/Modal';
 import Spinner from '../../../components/Spinner';
 import useContactLists from '../../../hooks/useContactLists';
 import { useSnackbar } from 'notistack';
-
+import { TabContext, TabList, TabPanel } from '@material-ui/lab';
+import ListArticles from '../ListArticles';
+import ListSummaries from '../ListSummaries';
 
 const infoStyles = makeStyles((theme) => ({
   title: {
@@ -46,36 +25,20 @@ const infoStyles = makeStyles((theme) => ({
     marginRight: 'auto',
     marginLeft: 'auto'
   },
-  margin: {
-    marginLeft: "132px",
-    marginRight: "135px",
-  },
-  marginButton: {
-    marginLeft: "200px",
-    marginRight: "200px",
-  },
-  color: {
-    background: "#196844"
-  },
-  nested: {
-    paddingLeft: theme.spacing(2)
-  },
-  buttonSummary: {
-    marginRight: '30px'
-  },
   formControl: {
     width: '100%'
-  }
+  },
 }));
-
 
 export default function Search() {
   const classes = infoStyles();
   const { enqueueSnackbar } = useSnackbar();
+  const [listSummariesKeywords, setListSummariesKeywords] = useState([])
   const [groupKey, setGroupKey] = useState([]);
   const [listKeywords, setListKeywords] = useState([]);
   const [data, setData] = useState({ keyword: "" })
   const [modal, setModal] = useState(false);
+  const [tabValue, setTabValue] = useState("1");
   const [cargando, setCargando] = useState(false);
   const { infoUser, token } = useContext(ContextCreate);
   const [infoSumario, setInfoSumario] = useState({ userId: '', name: '', description: '', list_articles: [], list_keywords: [], favorite: false, user_id: '', errorNombre: false })
@@ -104,9 +67,12 @@ export default function Search() {
     getArticlesByKeyword(data)
       .then((res) => {
         setCargando(false)
-        setListKeywords(data.keyword.trim().toUpperCase().split(","))
+        const arrayKeywords = data.keyword.split(",").map(key => key.trim().toUpperCase())
+        setListKeywords(arrayKeywords)
         setGroupKey(res.data.slice(0, 30))
+        return getSummariesByKeywords(infoUser._id, arrayKeywords, token)
       })
+      .then(summaries => setListSummariesKeywords(summaries.data))
       .catch((error) => {
         if (!axios.isCancel(error)) {
           console.log("ererererer")
@@ -208,8 +174,8 @@ export default function Search() {
             {infoSendSummary.error && <FormHelperText>Debe seleccionar una lista</FormHelperText>}
           </FormControl>}
       </Modal>
-      <Grid container style={{ marginTop: '60px'}}>
-        <Grid container xs={11} direction="row-reverse" >
+      <Grid container style={{ marginTop: '60px' }}>
+        <Grid item xs={11}  >
           <FormControl variant="outlined" fullWidth>
             <OutlinedInput
               id="txt_keyword"
@@ -230,80 +196,41 @@ export default function Search() {
             name="search"
             variant="contained"
             color="primary"
+            style={{display: 'flex'}}
             onClick={getArticlesList}
-            className={classes.title}
-          >
+            className={classes.title}>
             Buscar
-            </Button>
+          </Button>
         </Grid>
-        <Grid container xs={1}>
+        <Grid item xs={1}>
           <Tooltip color="primary" title="Para buscar por varias palabras, se deben separar con una coma (,). Solo se permite un máximo de 3 palabras por búsqueda." placement="top" arrow>
             <InfoIcon fontSize="large" style={{ marginTop: '10px', marginLeft: '10px' }} />
           </Tooltip>
         </Grid>
       </Grid>
 
-      {groupKey.length === 0 ? null : (
-        <Grid container>
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell></TableCell>
-                  <TableCell>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      size="medium"
-                      className={classes.buttonSummary}
-                      onClick={() => crearSumario(false)}
-                      startIcon={<AddCircleIcon />}>
-                      Crear sumario
-                    </Button>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      size="medium"
-                      className={classes.buttonSummary}
-                      onClick={() => crearSumario(true)}
-                      startIcon={<SendIcon />}>
-                      Crear y enviar
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {groupKey.map((item) => (
-                  <TableRow key={item._id} >
-                    <TableCell>
-                      <Checkbox color="primary" value={item._id} name="listArticles" onChange={handleArticlesSelected}></Checkbox>
-                    </TableCell>
-                    <TableCell>
-                      <Typography style={{ color: "#196844" }} >{item.title}</Typography>
-                      <Typography variante="subtitle1" className={classes.nested} >{item.authors}</Typography>
-                      <Link target="_blank" href={item.urlHtml} variante="subtitle1" className={classes.nested} >{item.urlHtml}</Link>
-                      <Typography variante="subtitle1" className={classes.nested} >
-                        Keywords: &nbsp;
-                        {data.keyword.split(",")[0] &&
-                          `${data.keyword.split(",")[0]}:  ${item.list_keywords[data.keyword.split(",")[0]?.toUpperCase().trim()] ? 
-                          item.list_keywords[data.keyword.split(",")[0]?.toUpperCase().trim()] : 0} `
-                        }
-                        {data.keyword.split(",")[1] &&
-                          `${data.keyword.split(",")[1]}:  ${item.list_keywords[data.keyword.split(",")[1]?.toUpperCase().trim()] ?
-                          item.list_keywords[data.keyword.split(",")[1]?.toUpperCase().trim()] : 0} `
-                        }
-                        {data.keyword.split(",")[2] &&
-                          `${data.keyword.split(",")[2]}:  ${item.list_keywords[data.keyword.split(",")[2]?.toUpperCase().trim()] ? 
-                          item.list_keywords[data.keyword.split(",")[2]?.toUpperCase().trim()] : 0} `
-                        }
-                      </Typography>
-                    </TableCell>
-                  </TableRow>))
-                }
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Grid>)}
+      {groupKey.length === 0 ? null :
+        (<TabContext value={tabValue} >
+          <AppBar position="static" color="secundary">
+            <TabList onChange={(event, newValue) => setTabValue(newValue)} aria-label="simple tabs example" indicatorColor="primary">
+              <Tab label="Artículos" value="1" />
+              <Tab label="Sumarios" value="2" />
+            </TabList>
+          </AppBar>
+          <TabPanel value="1">
+            {groupKey.length === 0 ? null : (
+              <ListArticles
+                articles={groupKey}
+                keywords={data.keyword}
+                crearSumario={(value) => crearSumario(value)}
+                handleArticlesSelected={handleArticlesSelected}
+              />
+            )}
+          </TabPanel>
+          <TabPanel value="2">
+            <ListSummaries listSummariesKeywords={listSummariesKeywords} />
+          </TabPanel>
+        </TabContext>)}
     </>
   )
 }
