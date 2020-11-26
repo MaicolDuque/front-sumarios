@@ -7,13 +7,14 @@ import SearchIcon from '@material-ui/icons/Search';
 import InfoIcon from '@material-ui/icons/Info';
 
 import { ContextCreate } from "../../../Auth/Context"; //Context
-import { getArticlesByKeyword, createSummary, sendEmailSummary } from '../../../services/summaryService'
+import { getArticlesByKeyword, createSummary, sendEmailSummary, getSummariesByKeywords } from '../../../services/summaryService'
 import Modal from '../../../components/Modal';
 import Spinner from '../../../components/Spinner';
 import useContactLists from '../../../hooks/useContactLists';
 import { useSnackbar } from 'notistack';
 import { TabContext, TabList, TabPanel } from '@material-ui/lab';
 import ListArticles from '../ListArticles';
+import ListSummaries from '../ListSummaries';
 
 const infoStyles = makeStyles((theme) => ({
   title: {
@@ -32,6 +33,7 @@ const infoStyles = makeStyles((theme) => ({
 export default function Search() {
   const classes = infoStyles();
   const { enqueueSnackbar } = useSnackbar();
+  const [listSummariesKeywords, setListSummariesKeywords] = useState([])
   const [groupKey, setGroupKey] = useState([]);
   const [listKeywords, setListKeywords] = useState([]);
   const [data, setData] = useState({ keyword: "" })
@@ -65,9 +67,12 @@ export default function Search() {
     getArticlesByKeyword(data)
       .then((res) => {
         setCargando(false)
-        setListKeywords(data.keyword.trim().toUpperCase().split(","))
+        const arrayKeywords = data.keyword.split(",").map(key => key.trim().toUpperCase())
+        setListKeywords(arrayKeywords)
         setGroupKey(res.data.slice(0, 30))
+        return getSummariesByKeywords(infoUser._id, arrayKeywords, token)
       })
+      .then(summaries => setListSummariesKeywords(summaries.data))
       .catch((error) => {
         if (!axios.isCancel(error)) {
           console.log("ererererer")
@@ -221,7 +226,9 @@ export default function Search() {
               />
             )}
           </TabPanel>
-          <TabPanel value="2">Item Two</TabPanel>
+          <TabPanel value="2">
+            <ListSummaries listSummariesKeywords={listSummariesKeywords} />
+          </TabPanel>
         </TabContext>)}
     </>
   )

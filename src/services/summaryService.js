@@ -93,3 +93,15 @@ export const getHistorySendsByUser = async (idUser, token) => {
     }
   })
 }
+
+export const getSummariesByKeywords = async (user_id, keywords, token) => {
+  return axios({
+    method: "POST",
+    baseURL: All.backend.url,
+    url: `/summaries/keywords`,
+    data: { user_id, keywords },
+    headers: {
+      token
+    }
+  })
+}
