@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from 'react'
-import { Button, Grid, makeStyles, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, DialogContentText, TextField } from '@material-ui/core'
+import { Button, Grid, makeStyles, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, DialogContentText, TextField, FormHelperText } from '@material-ui/core'
 import VisibilityIcon from '@material-ui/icons/Visibility';
 
 import { ContextCreate } from '../../Auth/Context';
@@ -32,6 +32,7 @@ const Magazines = ({ enqueueSnackbar }) => {
   const { token } = useContext(ContextCreate);
   const [usersMagazine, setUsersMagazine] = useState([])
   const [modal, setModal] = useState(false);
+  const [alertError, setAlertError] = useState(false);
   const [addMagazine, setAddMagazine] = useState({
     mg_name: "",
     email: "",
@@ -60,38 +61,44 @@ const Magazines = ({ enqueueSnackbar }) => {
   }
   const cerrarModal = () => {
     setModal(false)
+    setAlertError(false)
   }
   const saveMagazine = () => {
-    postSolicitude(addMagazine)
-      .then(res => {
-        const idUser = res.data.result._id
-        const infoSend = {
-          id_user: idUser,
-          mg_contact_lists: dataContactList
-        }
-        if (res.data.caution) {
-          enqueueSnackbarRef.current(res.data.msg, {
-            variant: "warning",
-          });
-        } else {
-          createContactList(infoSend)
-            .then((contactList) => {
-              enqueueSnackbarRef.current(res.data.msg, {
-                variant: "success",
-              });
-            })
-            .catch(result => {
-              enqueueSnackbarRef.current("No se pudo enviar la solicitud.", {
-                variant: "error",
-              });
-            })
-        }
-      })
-      .catch(res => {
+    if (addMagazine.mg_name && addMagazine.email && addMagazine.mg_urlMagazine) {
+      postSolicitude(addMagazine)
+        .then(res => {
+          const idUser = res.data.result._id
+          const infoSend = {
+            id_user: idUser,
+            mg_contact_lists: dataContactList
+          }
+          if (res.data.caution) {
+            enqueueSnackbarRef.current(res.data.msg, {
+              variant: "warning",
+            });
+          } else {
+            createContactList(infoSend)
+              .then((contactList) => {
+                enqueueSnackbarRef.current(res.data.msg, {
+                  variant: "success",
+                });
+                setRefresh(!refresh)
+                setAlertError(false)
+              })
+              .catch(result => {
+                enqueueSnackbarRef.current("No se pudo enviar la solicitud.", {
+                  variant: "error",
+                });
+              })
+          }
+        })
+        .catch(res => {
 
-      })
-      setRefresh(!refresh)
-      cerrarModal()
+        })
+        cerrarModal()
+    }else{
+      setAlertError(true)
+    }
   }
 
 
@@ -107,17 +114,13 @@ const Magazines = ({ enqueueSnackbar }) => {
         <DialogContentText>
           Ingrese nombre, correo electrónico y URL de la revista.
       </DialogContentText>
-        <TextField id={"txt_nameMagazine"} name={"mg_name"} variant="outlined"
-          label="Nombre de la revista" autoFocus type="text" fullWidth
-          onChange={(event) => { setAddMagazine({ ...addMagazine, mg_name: event.target.value }) }} />
-        <p />
-        <TextField id={"txt_emailMagazine"} name={"email"} variant="outlined"
-          label="Correo electrónico" type="text" fullWidth
-          onChange={(event) => { setAddMagazine({ ...addMagazine, email: event.target.value }) }} />
-        <p />
-        <TextField id={"txt_urlMagazine"} name={"mg_urlMagazine"} variant="outlined"
-          label="Url de la revista" type="text" fullWidth
-          onChange={(event) => { setAddMagazine({ ...addMagazine, mg_urlMagazine: event.target.value }) }} />
+        <TextField id={"txt_nameMagazine"} name={"mg_name"} variant="outlined" label="Nombre de la revista" autoFocus type="text" fullWidth
+          onChange={(event) => { setAddMagazine({ ...addMagazine, mg_name: event.target.value }) }} error={alertError && !addMagazine.mg_name} required/><p />
+        <TextField id={"txt_emailMagazine"} name={"email"} variant="outlined" label="Correo electrónico" type="text" fullWidth
+          onChange={(event) => { setAddMagazine({ ...addMagazine, email: event.target.value }) }} error={alertError && !addMagazine.email} required/><p />
+        <TextField id={"txt_urlMagazine"} name={"mg_urlMagazine"} variant="outlined" label="Url de la revista" type="text" fullWidth
+          onChange={(event) => { setAddMagazine({ ...addMagazine, mg_urlMagazine: event.target.value }) }} error={alertError && !addMagazine.mg_urlMagazine} required/>
+          {alertError && <FormHelperText>Todos los campos son requeridos.</FormHelperText>}
       </Modal>
       <Grid>
         <Typography variant="h3" component="h2" gutterBottom align="center" style={{ color: "#196844" }}>Lista de Revistas</Typography>
@@ -127,16 +130,10 @@ const Magazines = ({ enqueueSnackbar }) => {
           <TableHead>
             <TableRow>
               <TableCell>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  size="medium"
-                  className={classes.buttonSummary}
-                  onClick={() => { openModal() }}
-                  startIcon={<AddCircleIcon />}>
-                  Agregar revista
-              </Button>
+                <Button variant="contained" color="primary" size="medium" className={classes.buttonSummary}
+                  onClick={() => { openModal() }} startIcon={<AddCircleIcon />}>Agregar revista</Button>
               </TableCell>
+              <TableCell />
               <TableCell />
               <TableCell />
               <TableCell />
@@ -162,8 +159,8 @@ const Magazines = ({ enqueueSnackbar }) => {
                 <TableCell align="center">
                   <Button startIcon={<VisibilityIcon />} onClick={() => verVolumes(row._id, row.mg_name, row.mg_urlMagazine)} />
                 </TableCell>
-                <TableCell align="center"> 
-                  <Button startIcon={<VisibilityIcon />} onClick={() => seeSummaries(row._id, row.mg_name, row.mg_urlMagazine)} /> 
+                <TableCell align="center">
+                  <Button startIcon={<VisibilityIcon />} onClick={() => seeSummaries(row._id, row.mg_name, row.mg_urlMagazine)} />
                 </TableCell>
               </TableRow>
             ))}
