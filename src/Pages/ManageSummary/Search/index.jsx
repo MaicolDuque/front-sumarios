@@ -175,7 +175,7 @@ export default function Search() {
           </FormControl>}
       </Modal>
       <Grid container style={{ marginTop: '60px' }}>
-        <Grid container xs={11} direction="row-reverse" >
+        <Grid item xs={11}  >
           <FormControl variant="outlined" fullWidth>
             <OutlinedInput
               id="txt_keyword"
@@ -196,12 +196,13 @@ export default function Search() {
             name="search"
             variant="contained"
             color="primary"
+            style={{display: 'flex'}}
             onClick={getArticlesList}
             className={classes.title}>
             Buscar
           </Button>
         </Grid>
-        <Grid container xs={1}>
+        <Grid item xs={1}>
           <Tooltip color="primary" title="Para buscar por varias palabras, se deben separar con una coma (,). Solo se permite un máximo de 3 palabras por búsqueda." placement="top" arrow>
             <InfoIcon fontSize="large" style={{ marginTop: '10px', marginLeft: '10px' }} />
           </Tooltip>
