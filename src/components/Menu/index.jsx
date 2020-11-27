@@ -79,7 +79,7 @@ export default function Menu({ window, mobileOpen, toggle }) {
             </ListItem>
           </CustomLink>
 
-          <CustomLink condition="admin" to="/magazines" style={{ textDecoration: "none" }}>
+          <CustomLink condition="admin" to="/" style={{ textDecoration: "none" }}>
             <ListItem button className={classes.nested}>
               <ListItemIcon>
                 <LibraryBooksIcon />

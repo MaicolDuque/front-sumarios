@@ -174,7 +174,7 @@ export default function Search() {
             {infoSendSummary.error && <FormHelperText>Debe seleccionar una lista</FormHelperText>}
           </FormControl>}
       </Modal>
-      <Grid container style={{ marginTop: '60px' }}>
+      <Grid container style={{ marginTop: '10%' }}>
         <Grid item xs={11}  >
           <FormControl variant="outlined" fullWidth>
             <OutlinedInput

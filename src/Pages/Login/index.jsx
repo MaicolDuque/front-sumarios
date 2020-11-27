@@ -63,17 +63,17 @@ const Login = () => {
 	})
 
 	return (
-		<>
+		<div style={{width: '50%', display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-end'}}>
 			<Button color="inherit"
 				onClick={() => {
 					signIn();
 				}}
 			>Iniciar sesión</Button>
-			<Button color="inherit"
+			<Button  color="inherit" 
 				onClick={() => {
 					history.push("/register");
 				}}>Registro</Button>
-		</>
+		</div>
 	);
 }
 
