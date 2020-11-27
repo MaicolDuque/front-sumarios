@@ -11,6 +11,8 @@ import Paper from '@material-ui/core/Paper';
 import SendIcon from '@material-ui/icons/Send';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import EditIcon from '@material-ui/icons/Edit';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import { DialogContentText, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, TextField, Typography } from '@material-ui/core';
 import axios from "axios";
 import { format } from 'date-fns'
@@ -184,7 +186,7 @@ export default function Summaries() {
               <TableRow key={row._id} style={{ cursor: 'pointer' }} >
                 <TableCell align="left"> {row.name}</TableCell>
                 <TableCell align="left">{row.description}</TableCell>
-                <TableCell align="center">{row.favorite ? 'SI' : 'NO'}</TableCell>
+                <TableCell align="center">{row.favorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}</TableCell>
                 <TableCell align="center">{format(new Date(row.createdAt), 'yyyy-MM-dd K:m aaaa')}</TableCell>
                 <TableCell> <VisibilityIcon onClick={() => seeArticles(row._id)} titleAccess="Ver articulos" /></TableCell>
                 <TableCell> <EditIcon onClick={() => showModalEdit(row)} titleAccess="Editar sumario" /> </TableCell>

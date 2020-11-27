@@ -23,7 +23,6 @@ export default function ListSummaries({ listSummariesKeywords = [] }){
   }
   return (
     <>
-      <h1>Summaries</h1>
       <TableContainer component={Paper}>
         <Table className={classes.table} aria-label="simple table">
           <TableHead>

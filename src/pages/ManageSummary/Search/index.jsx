@@ -62,15 +62,20 @@ export default function Search() {
   }
 
   let getArticlesList = () => {
-    setCargando(true)
     setGroupKey([])
+    if(!data.keyword) return enqueueSnackbar("Por favor ingrese una palabra clave", { variant: 'warning' })
+    setCargando(true)
     getArticlesByKeyword(data)
       .then((res) => {
         setCargando(false)
         const arrayKeywords = data.keyword.split(",").map(key => key.trim().toUpperCase())
         setListKeywords(arrayKeywords)
-        setGroupKey(res.data.slice(0, 30))
-        return getSummariesByKeywords(infoUser._id, arrayKeywords, token)
+        if(res.data.length){
+          setGroupKey(res.data.slice(0, 30))
+          return getSummariesByKeywords(infoUser._id, arrayKeywords, token)
+        }else{
+          enqueueSnackbar("No se encontraron articulos con las palabras claves indicadas", { variant: 'info' })
+        }
       })
       .then(summaries => setListSummariesKeywords(summaries.data))
       .catch((error) => {
@@ -82,9 +87,13 @@ export default function Search() {
   }
 
   const crearSumario = (isToSend = false) => {
-    setInfoSendSummary({ ...infoSendSummary, show: isToSend })
-    setInfoSumario({ ...infoSumario, list_keywords: listKeywords, user_id: infoUser._id, userId: infoUser._id })
-    setModal(true)
+    if(infoSumario.list_articles.length){
+      setInfoSendSummary({ ...infoSendSummary, show: isToSend })
+      setInfoSumario({ ...infoSumario, list_keywords: listKeywords, user_id: infoUser._id, userId: infoUser._id })
+      setModal(true)
+    }else{
+      enqueueSnackbar("Por favor seleccionar los articulos del sumario", { variant: 'warning' })
+    }
   }
 
   const saveSummary = () => {
@@ -218,6 +227,7 @@ export default function Search() {
             </TabList>
           </AppBar>
           <TabPanel value="1">
+          <FormHelperText>Seleccionar los articulos para crear el sumario.</FormHelperText>
             {groupKey.length === 0 ? null : (
               <ListArticles
                 articles={groupKey}
