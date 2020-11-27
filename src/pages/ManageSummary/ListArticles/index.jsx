@@ -54,7 +54,7 @@ export default function ListArticles({ articles, keywords, crearSumario, handleA
                 <TableCell>
                   <Typography style={{ color: "#196844" }} >{item.title}</Typography>
                   <Typography variante="subtitle1" className={classes.nested} >{item.authors}</Typography>
-                  <Link target="_blank" href={item.urlHtml} variante="subtitle1" className={classes.nested} >{item.urlHtml}</Link>
+                  <a target="_blank" rel="noopener noreferrer" href={item.urlHtml} className={classes.nested} >{item.urlHtml}</a>
                   <Typography variante="subtitle1" className={classes.nested} >
                     Keywords: &nbsp;
                         {keywords.split(",")[0] &&
