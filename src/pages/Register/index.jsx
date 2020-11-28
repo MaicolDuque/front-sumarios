@@ -28,21 +28,6 @@ const infoCorpStyles = makeStyles((theme) => ({
   color: {
     background: "#196844"
   },
-  large: {
-    width: theme.spacing(50),
-    height: theme.spacing(50),
-    align: "center",
-  },
-  snackbarRegister: {
-    backgroundColor: "#ffffff",
-    color: "black",
-    backgroundImage: `url(${ImgRegister})`,
-    backgroundRepeat: "no-repeat",
-    backgroundSize: "contain",
-    height: "300px",
-    width: "45%",
-    backgroundPosition: "right center"
-  },
 }));
 
 
@@ -112,29 +97,28 @@ const Register = ({ enqueueSnackbar }) => {
   }
 
   return (
-    <Grid container spacing={3}>
+    <Grid container spacing={3} direction={"row"}>
       <Grid item xs={12}>
         <Typography variant="h3" component="h2" gutterBottom align="center" style={{ color: "#196844" }}>¡Regístrate!</Typography>
       </Grid>
 
-      <Grid item xs={12}>
-        <center>
-          <SnackbarContent className={classes.snackbarRegister}
-            message={<Grid item xs={12}>
+        <Grid  container elevation={3} component={Paper} alignItems="center" style={{padding:"50px"}}>
+            <Grid item xs={12} sm={6}>
               <TextField required id="txt_magazine_name" name="mg_name" label="Nombre de la Revista" error={alertError && !data.mg_name}
-                variant="outlined" value={data.mg_name} onChange={handleInputChange} /><p />
+                variant="outlined" value={data.mg_name} onChange={handleInputChange} fullWidth/><p />
               <TextField required id="txt_magazine_email" name="email" label="Correo de la Revista" error={alertError && !data.email}
-                variant="outlined" value={data.email} onChange={handleInputChange} /><p />
+                variant="outlined" value={data.email} onChange={handleInputChange} fullWidth/><p />
               <TextField required id="txt_magazine_url" name="mg_urlMagazine" label="URL de la Revista" error={alertError && !data.mg_urlMagazine}
-                variant="outlined" value={data.mg_urlMagazine} onChange={handleInputChange} /><p />
+                variant="outlined" value={data.mg_urlMagazine} onChange={handleInputChange} fullWidth/><p />
               {alertError && <FormHelperText>Todos los campos son requeridos.</FormHelperText>}<p />
               <Button type="submit" className={classes.color} variant="contained" id="btn_send"
                 name="send" fullWidth color="primary" onClick={() => { submitData() }}>Enviar</Button>
-            </Grid>}
-          >
-          </SnackbarContent>
-        </center>
-      </Grid>
+
+            </Grid>
+            <Grid item xs={12} sm={6} align="center">
+              <img src={require("../../Images/machine.jpg")} width="60%" />
+            </Grid>
+        </Grid>
     </Grid>
   )
 }
