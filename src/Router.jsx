@@ -26,12 +26,12 @@ const Routes = () => {
 						<Switch>
 							<Route path="/register" exact component={Register} />
 							<AuthRouter>
-								<CustomRoute condition="editor" path="/" exact component={Search} />
 								<CustomRoute condition="editor" path="/contactList" exact component={ContactsList} />
+								<CustomRoute condition="editor" path="/" exact component={Search} />
 								<CustomRoute condition="editor" path="/summaries" exact component={Summaries} />
 								<CustomRoute condition="editor" path="/summaries/articles" exact component={Articles} />
 								<CustomRoute condition="editor" path="/history" exact component={SendingHistory} />
-								<CustomRoute condition="admin" path="/magazines" exact component={Magazines} />
+								<CustomRoute condition="admin" path="/" exact component={Magazines} />
 								<CustomRoute condition="admin" path="/magazines/volumes" exact component={Volumes} />
 								<CustomRoute condition="admin" path="/magazines/summaries" exact component={SummariesMagazine} />
                 <CustomRoute condition="admin" path="/request" exact component={Solicitude}/>

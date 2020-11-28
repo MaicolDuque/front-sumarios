@@ -24,6 +24,7 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     flexGrow: 1,
+    width: '50%'
   },
 }));
 export default function Header({toggle}) {
@@ -61,20 +62,19 @@ export default function Header({toggle}) {
   return (
     <AppBar position="fixed" className={classes.customHeader}>
       <Toolbar className={classes.toolbarHeader}>
-        <IconButton
+        {token ? (<IconButton
           color="inherit"
           aria-label="open drawer"
           edge="start"
           onClick={() => toggle()}
-          className={classes.menuButton}
-        >
+          className={classes.menuButton}>
           <MenuIcon />
-        </IconButton>
+        </IconButton>) : null}
         <Box paddingRight={1} className={classes.title} onClick={() => {changeActionUrl()}}>
           <img
             src={require("../../Images/logo.png")}
             alt="Poli"
-            width="300px"
+            style={{ width: '300px', maxWidth: '100%' }}
           />
         </Box>
         {token ? (buttonHome()) : <Login />}
