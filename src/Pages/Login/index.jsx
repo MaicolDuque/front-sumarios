@@ -13,7 +13,7 @@ const Login = () => {
 		email: ""
 	})
 
-	const { iniciarSesion } = useContext(ContextCreate);
+	const { iniciarSesion, disableImgInit } = useContext(ContextCreate);
 
 	const submitData = () => {
 		axios(
@@ -71,6 +71,7 @@ const Login = () => {
 			>Iniciar sesión</Button>
 			<Button color="inherit"
 				onClick={() => {
+					disableImgInit()
 					history.push("/register");
 				}}>Registro</Button>
 		</>

@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, Typography, Paper } from '@material-ui/core';
 import { Grid } from '@material-ui/core';
+import 'animate.css'
 
 import Header from '../../components/Header';
 import Menu from '../../components/Menu';
+import Elements from './elements'
 
 const drawerWidth = 240;
 
@@ -37,11 +39,14 @@ const useStyles = makeStyles((theme) => ({
       marginRight: '10px',
     },
   },
+  nested: {
+    paddingLeft: theme.spacing(2)
+  },
 }));
 
 function Home({ children }) {
   const classes = useStyles();
-  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -54,7 +59,8 @@ function Home({ children }) {
       <Menu mobileOpen={mobileOpen} toggle={handleDrawerToggle} />
       <main className={classes.content}>
         <div className={classes.toolbar} />
-        <Grid  className={classes.paper}>
+        <Grid className={classes.paper}>
+          <Elements/>
           {children}
         </Grid>
       </main>

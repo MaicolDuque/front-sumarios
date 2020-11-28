@@ -26,6 +26,7 @@ import SystemUpdateAltIcon from '@material-ui/icons/SystemUpdateAlt';
 import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
 import { withSnackbar } from "notistack";
+import { format } from 'date-fns'
 
 
 //Context
@@ -336,7 +337,7 @@ const ContactList = ({ enqueueSnackbar }) => {
                                             <TableRow key={item._id} style={{ cursor: 'pointer' }}>
                                                 <TableCell>{item.name}</TableCell>
                                                 <TableCell>{item.description}</TableCell>
-                                                <TableCell>{item.createdAt}</TableCell>
+                                                <TableCell>{format(new Date(item.createdAt), 'yyyy-MM-dd K:m aaaa')}</TableCell>
                                                 <TableCell><Button startIcon={<VisibilityIcon />} onClick={() => onClickGetContactList(item)} /></TableCell>
                                                 <TableCell><Button startIcon={<DeleteForeverIcon style={{ color: '#A93226' }} />} onClick={() => deleteCL(item._id)} /></TableCell>
                                             </TableRow>))

@@ -1,10 +1,11 @@
 import React, { useState, useRef } from 'react'
-import { TextField, Grid, Paper, Typography, Button, Box, TableCell, TableRow, FormHelperText } from '@material-ui/core';
+import { TextField, Grid, Paper, Typography, Button, Box, SnackbarContent, FormHelperText } from '@material-ui/core';
 import { makeStyles } from "@material-ui/core/styles";
 import { withSnackbar } from "notistack";
 
 import { postSolicitude } from "../../services/usersService"
 import { createContactList } from "../../services/contactsService"
+import ImgRegister from '../../Images/machine.jpg'
 
 const infoCorpStyles = makeStyles((theme) => ({
   paper: {
@@ -32,6 +33,16 @@ const infoCorpStyles = makeStyles((theme) => ({
     height: theme.spacing(50),
     align: "center",
   },
+  snackbarRegister: {
+    backgroundColor: "#ffffff",
+    color: "black",
+    backgroundImage: `url(${ImgRegister})`,
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "contain",
+    height: "300px",
+    width: "45%",
+    backgroundPosition: "right center"
+  },
 }));
 
 
@@ -56,8 +67,8 @@ const Register = ({ enqueueSnackbar }) => {
       [event.target.name]: event.target.value
     })
   }
-  const clear = () =>{
-    setData({...data, mg_name:"", email:"", mg_urlMagazine:""})
+  const clear = () => {
+    setData({ ...data, mg_name: "", email: "", mg_urlMagazine: "" })
   }
   const submitData = () => {
     if (data.mg_name && data.email && data.mg_urlMagazine) {
@@ -75,7 +86,8 @@ const Register = ({ enqueueSnackbar }) => {
           } else {
             createContactList(infoSend)
               .then((contactList) => {
-                enqueueSnackbarRef.current(res.data.msg, {
+                const msg = res.data.msg + ", espere a que el administrador active la cuenta."
+                enqueueSnackbarRef.current(msg, {
                   variant: "success",
                 });
                 clear()
@@ -100,32 +112,30 @@ const Register = ({ enqueueSnackbar }) => {
   }
 
   return (
-    <>
+    <Grid container spacing={3}>
       <Grid item xs={12}>
         <Typography variant="h3" component="h2" gutterBottom align="center" style={{ color: "#196844" }}>¡Regístrate!</Typography>
       </Grid>
 
-      <Grid>
+      <Grid item xs={12}>
         <center>
-          <Box component={Paper}>
-            <TableRow>
-              <TableCell>
-                <TextField required id="txt_magazine_name" name="mg_name" label="Nombre de la Revista" error={alertError && !data.mg_name}
-                  variant="outlined" value={data.mg_name} onChange={handleInputChange} /><p />
-                <TextField required id="txt_magazine_email" name="email" label="Correo de la Revista" error={alertError && !data.email}
-                  variant="outlined" value={data.email} onChange={handleInputChange} /><p />
-                <TextField required id="txt_magazine_url" name="mg_urlMagazine" label="URL de la Revista" error={alertError && !data.mg_urlMagazine}
-                  variant="outlined" value={data.mg_urlMagazine} onChange={handleInputChange} /><p />
-                {alertError && <FormHelperText>Todos los campos son requeridos.</FormHelperText>}<p />
-                <Button type="submit" className={classes.color} variant="contained" id="btn_send"
-                  name="send" fullWidth color="primary" onClick={() => { submitData() }}>Enviar</Button>
-              </TableCell>
-              <TableCell><img src={require("../../Images/register.jpg")} className={classes.large} /></TableCell>
-            </TableRow>
-          </Box>
+          <SnackbarContent className={classes.snackbarRegister}
+            message={<Grid item xs={12}>
+              <TextField required id="txt_magazine_name" name="mg_name" label="Nombre de la Revista" error={alertError && !data.mg_name}
+                variant="outlined" value={data.mg_name} onChange={handleInputChange} /><p />
+              <TextField required id="txt_magazine_email" name="email" label="Correo de la Revista" error={alertError && !data.email}
+                variant="outlined" value={data.email} onChange={handleInputChange} /><p />
+              <TextField required id="txt_magazine_url" name="mg_urlMagazine" label="URL de la Revista" error={alertError && !data.mg_urlMagazine}
+                variant="outlined" value={data.mg_urlMagazine} onChange={handleInputChange} /><p />
+              {alertError && <FormHelperText>Todos los campos son requeridos.</FormHelperText>}<p />
+              <Button type="submit" className={classes.color} variant="contained" id="btn_send"
+                name="send" fullWidth color="primary" onClick={() => { submitData() }}>Enviar</Button>
+            </Grid>}
+          >
+          </SnackbarContent>
         </center>
       </Grid>
-    </>
+    </Grid>
   )
 }
 

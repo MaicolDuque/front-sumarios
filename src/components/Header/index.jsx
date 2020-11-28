@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 export default function Header({toggle}) {
-  const { token, cerrarSesion } = useContext(ContextCreate);
+  const { token, cerrarSesion, enableImgInit } = useContext(ContextCreate);
   const classes = useStyles()
   const history = useHistory()
   const onLogoutSuccess = (res) => {
@@ -43,6 +43,15 @@ export default function Header({toggle}) {
     onLogoutSuccess,
     onFailure
   })
+
+  const changeActionUrl = ()=>{
+    if(token){
+      history.push("/home")
+    }else{
+      history.push("/")
+      enableImgInit()
+    }
+  }
 
   const buttonHome = () => {
     return (
@@ -61,7 +70,7 @@ export default function Header({toggle}) {
         >
           <MenuIcon />
         </IconButton>
-        <Box paddingRight={1} className={classes.title} onClick={() => { history.push("/home"); }}>
+        <Box paddingRight={1} className={classes.title} onClick={() => {changeActionUrl()}}>
           <img
             src={require("../../Images/logo.png")}
             alt="Poli"

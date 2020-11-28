@@ -16,7 +16,6 @@ import Solicitude from "./pages/ManagePublisher/Publisher/index"
 import PersonalInformation from "./pages/ManagePublisher/Publisher/personalInfo"
 import CustomRoute from "./components/CustomRoute"
 import SummariesMagazine from "./pages/Magazines/Summaries"
-import Statistics from "./pages/Statistics"
 
 const Routes = () => {
 	return (

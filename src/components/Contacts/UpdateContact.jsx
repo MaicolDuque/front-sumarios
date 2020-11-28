@@ -23,6 +23,16 @@ const UpdateContact = ({ dataContact, open, close, enqueueSnackbar }) => {
         id: ""
     })
 
+    const clear = ()=>{
+        setInfoContact({
+            c_name:"",
+            c_email:""
+        })
+        setIdContact({
+            id:""
+        })
+    }
+
     const handleSelectContact = (event, newValue) => {
         setIdContact({ ...idContact, id: ((newValue === null) ? "" : newValue._id) });
         setInfoContact({ ...infoContact, c_name: newValue.c_name, c_email: newValue.c_email })
@@ -30,7 +40,7 @@ const UpdateContact = ({ dataContact, open, close, enqueueSnackbar }) => {
 
     const closeAll = () => {
         setAlertError(false)
-        setInfoContact({ ...infoContact, c_name: "", c_email: "" })
+        clear()
         close()
     }
     const uContact = () => {
@@ -51,6 +61,7 @@ const UpdateContact = ({ dataContact, open, close, enqueueSnackbar }) => {
                         });
                     }
                 })
+            clear()
             close()
         } else {
             setAlertError(true)

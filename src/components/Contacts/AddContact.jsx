@@ -57,6 +57,7 @@ const AddContact = ({ dataContactList, open, close, enqueueSnackbar, refresh }) 
                         console.error(error);
                     }
                 })
+            clear()
             close()
         } else {
             setAlertError(true)

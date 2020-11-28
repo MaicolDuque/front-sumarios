@@ -8,7 +8,7 @@ const Context = ({ children }) => {
     const [data, setData] = useState({
         token: localStorage.getItem("token") ? localStorage.getItem("token") : null,
         autenticado: false,
-        strData: "",
+        validationRegister: false,
         user: localStorage.getItem("token") ? jwt_decode(localStorage.getItem("token").split(' ')[1]) : null
     });
 
@@ -18,6 +18,7 @@ const Context = ({ children }) => {
         setData((prevState) => ({
             ...prevState,
             token,
+            validationRegister: true,
             user: jwt_decode(localStorage.getItem("token").split(' ')[1])
         }));
     };
@@ -26,7 +27,7 @@ const Context = ({ children }) => {
         setData((prevState) => ({
             ...prevState,
             token: null,
-            strData: "",
+            validationRegister: false,
             user:"",
         }));
         localStorage.removeItem("token");
@@ -47,6 +48,18 @@ const Context = ({ children }) => {
             }));
         }
     };
+    const disableImgInit = ()=>{
+        setData((prevState)=>({
+            ...prevState,
+            validationRegister: true
+        }))
+    }
+    const enableImgInit = ()=>{
+        setData((prevState)=>({
+            ...prevState,
+            validationRegister: false
+        }))
+    }
 
     return (
         <ContextCreate.Provider
@@ -54,8 +67,10 @@ const Context = ({ children }) => {
                 iniciarSesion,
                 cerrarSesion,
                 autenticarToken,
+                disableImgInit,
+                enableImgInit,
                 token: data.token,
-                strData: data.strData,
+                validationRegister: data.validationRegister,
                 infoUser: data.user
             }}
         >

@@ -9,7 +9,6 @@ import SubjectIcon from '@material-ui/icons/Subject';
 import FaceIcon from '@material-ui/icons/Face';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import HomeIcon from '@material-ui/icons/Home';
 
 import { ContextCreate } from '../../Auth/Context';
 import CustomLink from '../CustomLink';
