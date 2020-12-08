@@ -1,13 +1,16 @@
 import axios from "axios";
 import All from '../config'
 
-export const getArticlesByKeyword = async (data) => {
+export const getArticlesByKeyword = async ({ keyword }, idUser, token) => {
   const result = await axios(
     {
       method: "POST",
       baseURL: `${process.env.REACT_APP_PROTOCOL_BACKEND}://${process.env.REACT_APP_HOST_BACKEND}${process.env.REACT_APP_PORT_BACKEND}`,
       url: `${process.env.REACT_APP_API_ARTICLES}`,
-      data,
+      data: { keyword, idUser },
+      headers: {
+        token
+      }
     }
   )
   return result

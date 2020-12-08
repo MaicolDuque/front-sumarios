@@ -65,7 +65,7 @@ export default function Search() {
     setGroupKey([])
     if(!data.keyword) return enqueueSnackbar("Por favor ingrese una palabra clave", { variant: 'warning' })
     setCargando(true)
-    getArticlesByKeyword(data)
+    getArticlesByKeyword(data, infoUser._id, token)
       .then((res) => {
         setCargando(false)
         const arrayKeywords = data.keyword.split(",").map(key => key.trim().toUpperCase())
