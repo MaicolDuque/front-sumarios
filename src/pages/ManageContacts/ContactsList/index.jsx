@@ -274,7 +274,7 @@ const ContactList = ({ enqueueSnackbar }) => {
 					{flagCreateList ? ("Integrese el nombre, la descripción y los contactos que pertenecerán a la lista.") :
 						("Puede cambiar el nombre, la descripción y los contactos que pertenecerán a la lista.")}
 				</DialogContentText>
-				<TextField margin="normal" name="txt_nameList" value={dataContactList.name} error={alertError && !dataContactList.name}
+				<TextField required margin="normal" name="txt_nameList" value={dataContactList.name} error={alertError && !dataContactList.name}
 					onChange={(event) => { setDataContactList({ ...dataContactList, name: event.target.value }) }}
 					autoFocus type="text" id="nameList" label="Nombre de la lista" variant="outlined" fullWidth /> <br />
 				<TextField margin="normal" name="txt_description" value={dataContactList.description} type="text" id="description"

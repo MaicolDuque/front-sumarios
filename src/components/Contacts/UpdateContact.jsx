@@ -84,7 +84,7 @@ const UpdateContact = ({ dataContact, open, close, enqueueSnackbar }) => {
                     options={dataContact}
                     getOptionLabel={(result) => result.c_name}
                     renderInput={(params) => (
-                        <TextField margin="normal"
+                        <TextField required margin="normal"
                             {...params}
                             autoFocus name="contactList" value={idContact.id} type="text" id="contactList"
                             label="Buscar contacto" variant="outlined" fullWidth error={alertError && !idContact?.id}

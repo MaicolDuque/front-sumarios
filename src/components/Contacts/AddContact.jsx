@@ -70,15 +70,15 @@ const AddContact = ({ dataContactList, open, close, enqueueSnackbar, refresh }) 
                 <DialogContentText>
                     Ingrese el nombre completo, correo electrónico y lista de distribución para agregar el contacto.
             </DialogContentText>
-                <TextField margin="normal" name="name" value={infoContact.c_name} onChange={(event) => { setInfoContact({ ...infoContact, c_name: event.target.value }) }}
+                <TextField required margin="normal" name="name" value={infoContact.c_name} onChange={(event) => { setInfoContact({ ...infoContact, c_name: event.target.value }) }}
                     autoFocus type="text" id="name" label="Nombre" variant="outlined" fullWidth error={alertError && !infoContact.c_name} /> <br />
-                <TextField margin="normal" name="email" value={infoContact.c_email} type="text" id="description" error={alertError && !infoContact.c_email}
+                <TextField required margin="normal" name="email" value={infoContact.c_email} type="text" id="description" error={alertError && !infoContact.c_email}
                     onChange={(event) => { setInfoContact({ ...infoContact, c_email: event.target.value }) }}
                     label="Correo electrónico" variant="outlined" fullWidth /> <br />
                 <Autocomplete freeSolo id='autoC_ContactsList' onChange={(event, newValue) => { setInfoContact({ ...infoContact, id_lista: ((newValue === null) ? "" : newValue._id) }) }}
                     options={dataContactList} getOptionLabel={(result) => result.name}
                     renderInput={(params) => (
-                        <TextField margin="normal"
+                        <TextField required margin="normal"
                             {...params}
                             name="contactList"
                             value={infoContact.id_lista}

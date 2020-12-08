@@ -56,7 +56,7 @@ const DeleteContact = ({ dataContactList, open, close, enqueueSnackbar, refresh 
                     options={dataContactList}
                     getOptionLabel={(result) => result.c_name}
                     renderInput={(params) => (
-                        <TextField margin="normal"
+                        <TextField required margin="normal"
                             {...params}
                             name="contactList"
                             id="cbx_contact"

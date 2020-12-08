@@ -99,7 +99,8 @@ const Register = ({ enqueueSnackbar }) => {
   return (
     <Grid container spacing={3} direction={"row"}>
       <Grid item xs={12}>
-        <Typography variant="h3" component="h2" gutterBottom align="center" style={{ color: "#196844" }}>¡Regístrate!</Typography>
+        <Typography variant="h3" component="h2" gutterBottom align="center" style={{ color: "#196844" }}>¡Regístrate como una revista!</Typography>
+        <Typography variant="subtitle1" component="h2" gutterBottom align="center" style={{ color: "#196844" }}>Y haz parte de nosotros</Typography>
       </Grid>
 
         <Grid  container elevation={3} component={Paper} alignItems="center" style={{padding:"50px"}}>

@@ -1,12 +1,7 @@
 import React, { useContext } from 'react';
-import { makeStyles, Typography, Paper, Box, Button, withStyles } from '@material-ui/core';
+import { makeStyles, Typography, Paper, Box, Button, GridList, GridListTile, GridListTileBar, } from '@material-ui/core';
 import { Grid } from '@material-ui/core';
 import 'animate.css'
-import SnackbarContent from '@material-ui/core/SnackbarContent';
-import ImgContact from '../../Images/contact.jpg'
-import ImgSearch from '../../Images/search.jpg'
-import ImgFav from '../../Images/fav.jpg'
-import ImgSummary from '../../Images/summary.jpg'
 
 import { ContextCreate } from '../../Auth/Context';
 
@@ -15,45 +10,17 @@ const useStyles = makeStyles((theme) => ({
         width: theme.spacing(50),
         height: theme.spacing(55),
     },
-    snackbarSearch: {
-        backgroundColor: "#ffffff",
-        color: "black",
-        backgroundImage: `url(${ImgSearch})`,
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "contain, cover",
-        height:"80px",
-        width:"100%",
-        backgroundPosition: "right center"
+    gridList: {
+        flexWrap: 'nowrap',
+        // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
+        transform: 'translateZ(0)',
+        animation: 'bounce'
     },
-    snackbarContact: {
-        backgroundColor: "#ffffff",
-        color: "black",
-        backgroundImage: `url(${ImgContact})`,
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "contain, cover",
-        height:"80px",
-        width:"100%",
-        backgroundPosition: "right center"
-    },
-    snackbarSummary: {
-        backgroundColor: "#ffffff",
-        color: "black",
-        backgroundImage: `url(${ImgSummary})`,
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "contain, cover",
-        height:"80px",
-        width:"100%",
-        backgroundPosition: "right center"
-    },
-    snackbarFavorite: {
-        backgroundColor: "#ffffff",
-        color: "black",
-        backgroundImage: `url(${ImgFav})`,
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "contain, cover",
-        height:"80px",
-        width:"100%",
-        backgroundPosition: "right center"
+    root: {
+        display: 'flex',
+        flexWrap: 'wrap',
+        justifyContent: 'space-around',
+        overflow: 'hidden',
     },
 }));
 
@@ -68,30 +35,37 @@ export default function Elements() {
     return (
         <>
             {
-                token || validationRegister || window.location.pathname === "/register"?
+                token || validationRegister || window.location.pathname === "/register" ?
                     null
                     :
-                    <Grid container spacing={3} className="animate__animated animate__backInLeft" direction="column">
-                        <Grid item xs={12} sm={12} lg={12}>
-                            <SnackbarContent className={classes.snackbarSearch}
-                                message={<Typography variant="h5" style={{ color: "#196844" }}> Busca artículos científicos</Typography>}
-                            />
+                    <Grid container spacing={3} direction="column">
+                        <Grid item xs={12}>
+                            <Typography variant="h3" component="h2" gutterBottom align="center" style={{ color: "#196844" }}>Gestión de sumarios</Typography>
+                            <Typography variant="subtitle1" component="h2" gutterBottom align="center" style={{ color: "#196844" }}>Aplicación para revistas en la que podrás...</Typography>
                         </Grid>
-                        <Grid item xs={12} sm={12} lg={12}>
-                            <SnackbarContent className={classes.snackbarSummary}
-                                message={<Typography variant="h5" style={{ color: "#196844" }}>Gestiona sumarios</Typography>}
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={12} lg={12}>
-                            <SnackbarContent className={classes.snackbarFavorite}
-                                message={<Typography variant="h5" style={{ color: "#196844" }}>Agrega sumarios a favoritos</Typography>}
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={12} lg={12}>
-                            <SnackbarContent className={classes.snackbarContact}
-                                message={<Typography variant="h5" component="h2" style={{ color: "#196844" }}>Gestiona contactos</Typography>}
-                            />
-                        </Grid>
+                        <div className={classes.root}>
+                            <GridList cellHeight={250} className={classes.gridList}>
+                                <GridListTile>
+                                    <img src={require("../../Images/contact.jpg")} />
+                                    <GridListTileBar title={"Gestionar contactos"} />
+                                </GridListTile>
+                                <GridListTile>
+                                    <img src={require("../../Images/search.jpg")} />
+                                    <GridListTileBar title={"Buscar artículos científicos"} />
+                                </GridListTile>
+                            </GridList>
+                            <br />
+                            <GridList cellHeight={250} className={classes.gridList}>
+                                <GridListTile>
+                                    <img src={require("../../Images/summary.jpg")} />
+                                    <GridListTileBar title={"Crear sumarios"} />
+                                </GridListTile>
+                                <GridListTile>
+                                    <img src={require("../../Images/fav.jpg")} />
+                                    <GridListTileBar title={"Enviar sumarios"} />
+                                </GridListTile>
+                            </GridList>
+                        </div>
                     </Grid>
             }
         </>
